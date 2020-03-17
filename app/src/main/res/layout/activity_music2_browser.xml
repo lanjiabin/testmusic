@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@null">
+
+    <TableLayout
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp">
+      <TableRow android:layout_marginTop="10dp">
+          <TextView
+              style="@style/Music_TextView"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/number_1" />
+          <Button
+              style="@style/Music_Button"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/now_playing" />
+      </TableRow>
+        <TableRow android:layout_marginTop="10dp">
+            <TextView
+                style="@style/Music_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/number_2" />
+            <Button
+                android:id="@+id/allSongsBtn"
+                style="@style/Music_Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/all_songs" />
+        </TableRow>
+        <TableRow android:layout_marginTop="10dp">
+            <TextView
+                style="@style/Music_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/number_3" />
+            <Button
+                style="@style/Music_Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/all_videos" />
+        </TableRow>
+        <TableRow android:layout_marginTop="10dp">
+            <TextView
+                style="@style/Music_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/number_4" />
+            <Button
+                style="@style/Music_Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/music_playlists" />
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

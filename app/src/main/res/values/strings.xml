@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">TestMusic</string>
+    <string name="number_1">&#8194;1&#8194;</string>
+    <string name="number_2">&#8194;2&#8194;</string>
+    <string name="number_3">&#8194;3&#8194;</string>
+    <string name="number_4">&#8194;4&#8194;</string>
+
+    <string name="now_playing">Now playing</string>
+    <string name="all_songs">All songs</string>
+    <string name="all_videos">All videos</string>
+    <string name="music_playlists">Music playlists</string>
+</resources>
