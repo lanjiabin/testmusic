@@ -2,69 +2,71 @@ package com.lanjiabin.testmusic;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.provider.MediaStore;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class MusicService {
-    public List<String> mMusicList;// 存放找到的所有mp3的绝对路径。
-    public MediaPlayer mPlayer; // 定义多媒体对象
-    public int mSongNum; // 当前播放的歌曲在List中的下标,flag为标志
-    public String mSongName; // 当前播放的歌曲名
+    public List<Map<String, Object>> mMusicList;
+    public MediaPlayer mPlayer;
+    public int mSongNum;
+    public String mSongName;
     Context mContext = null;
 
-    //初始化，获得本地歌曲名和地址
     public MusicService(Context context) {
         super();
         mContext = context;
         mPlayer = new MediaPlayer();
-        mMusicList = new ArrayList<String>();
+        mMusicList = new ArrayList<Map<String, Object>>();
         List<MusicFileInfo> musicFileInfoList = getMusicFileInfo();
         for (Iterator iterator = musicFileInfoList.iterator(); iterator.hasNext(); ) {
             MusicFileInfo musicFileInfo = (MusicFileInfo) iterator.next();
-//            HashMap<String, String> map = new HashMap<String, String>();
-//            map.put("title", musicFileInfo.getTitle());
-//            map.put("Artist", musicFileInfo.getArtist());
-//            map.put("duration", String.valueOf(musicFileInfo.getDuration()));
-//            map.put("size", String.valueOf(musicFileInfo.getSize()));
-//            map.put("url", musicFileInfo.getUrl());
-            mMusicList.add(musicFileInfo.getUrl());
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("title", musicFileInfo.getTitle());
+            map.put("Artist", musicFileInfo.getArtist());
+            map.put("duration", String.valueOf(musicFileInfo.getDuration()));
+            map.put("size", String.valueOf(musicFileInfo.getSize()));
+            map.put("url", musicFileInfo.getUrl());
+            mMusicList.add(map);
         }
+
     }
 
-    //获取所有mp3文件信息
     public List<MusicFileInfo> getMusicFileInfo() {
         Cursor cursor = mContext.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null,
                 MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
-        List<MusicFileInfo> musicFileInfos = new ArrayList<MusicFileInfo>();
+        List<MusicFileInfo> musicFileIfs = new ArrayList<MusicFileInfo>();
         for (int i = 0; i < cursor.getCount(); i++) {
             MusicFileInfo musicFileInfo = new MusicFileInfo();
             cursor.moveToNext();
             long id = cursor.getLong(cursor
-                    .getColumnIndex(MediaStore.Audio.Media._ID));   //音乐id
+                    .getColumnIndex(MediaStore.Audio.Media._ID));
             String title = cursor.getString((cursor
-                    .getColumnIndex(MediaStore.Audio.Media.TITLE)));//音乐标题
+                    .getColumnIndex(MediaStore.Audio.Media.TITLE)));
             String artist = cursor.getString(cursor
-                    .getColumnIndex(MediaStore.Audio.Media.ARTIST));//艺术家
+                    .getColumnIndex(MediaStore.Audio.Media.ARTIST));
             long duration = cursor.getLong(cursor
-                    .getColumnIndex(MediaStore.Audio.Media.DURATION));//时长
+                    .getColumnIndex(MediaStore.Audio.Media.DURATION));
             long size = cursor.getLong(cursor
-                    .getColumnIndex(MediaStore.Audio.Media.SIZE));  //文件大小
+                    .getColumnIndex(MediaStore.Audio.Media.SIZE));
             String url = cursor.getString(cursor
-                    .getColumnIndex(MediaStore.Audio.Media.DATA)); //文件路径
+                    .getColumnIndex(MediaStore.Audio.Media.DATA));
             int isMusic = cursor.getInt(cursor
-                    .getColumnIndex(MediaStore.Audio.Media.IS_MUSIC));//是否为音乐
+                    .getColumnIndex(MediaStore.Audio.Media.IS_MUSIC));
 
-            String quality = MediaStore.EXTRA_VIDEO_QUALITY; //音乐质量
-            String channel = MediaStore.EXTRA_MEDIA_RADIO_CHANNEL; //音乐质量
+            String quality = MediaStore.EXTRA_VIDEO_QUALITY;
+            String channel = MediaStore.EXTRA_MEDIA_RADIO_CHANNEL;
 
 
-            if (isMusic != 0) {     //只把音乐添加到集合当中
+            if (isMusic != 0) {
                 musicFileInfo.setId(id);
                 musicFileInfo.setTitle(title);
                 musicFileInfo.setArtist(artist);
@@ -73,9 +75,71 @@ public class MusicService {
                 musicFileInfo.setUrl(url);
                 musicFileInfo.setQuality(quality);
                 musicFileInfo.setChannel(channel);
-                musicFileInfos.add(musicFileInfo);
+                musicFileIfs.add(musicFileInfo);
             }
         }
-        return musicFileInfos;
+        return musicFileIfs;
+    }
+
+    public void play() {
+        try {
+            mPlayer.reset();
+            String dataSource = (String) mMusicList.get(mSongNum).get("url");
+            setPlayName(dataSource);
+            mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mPlayer.setDataSource(dataSource);
+            mPlayer.prepare();
+            mPlayer.start();
+            mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer arg0) {
+                    next();
+                }
+            });
+
+        } catch (Exception e) {
+        }
+    }
+
+    public void next() {
+        mSongNum = mSongNum == mMusicList.size() - 1 ? 0 : mSongNum + 1;
+        play();
+    }
+
+    public void last() {
+        mSongNum = mSongNum == 0 ? mMusicList.size() - 1 : mSongNum - 1;
+        play();
+    }
+
+    public void pause() {
+        if (mPlayer != null && mPlayer.isPlaying()) {
+            mPlayer.pause();
+        }
+    }
+
+    public void goPlay() {
+        int position = getCurrentProgress();
+        mPlayer.seekTo(position);
+        try {
+            mPlayer.prepare();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mPlayer.start();
+    }
+
+    public int getCurrentProgress() {
+        if (mPlayer != null & mPlayer.isPlaying()) {
+            return mPlayer.getCurrentPosition();
+        } else if (mPlayer != null & (!mPlayer.isPlaying())) {
+            return mPlayer.getCurrentPosition();
+        }
+        return 0;
+    }
+
+    public void setPlayName(String dataSource) {
+        File file = new File(dataSource);
+        String name = file.getName();
+        int index = name.lastIndexOf(".");
+        mSongName = name.substring(0, index);
     }
 }

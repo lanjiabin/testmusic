@@ -4,10 +4,11 @@
     package="com.lanjiabin.testmusic">
     <!-- 向SD卡读写入数据权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- 在SD卡中创建与删除文件权限 -->
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 在SD卡中创建与删除文件权限 -->
+    <uses-permission
+        android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
         tools:ignore="ProtectedPermissions" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -15,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AllSongsActivity"></activity>
+        <activity android:name=".NowPlayingActivity"></activity>
+        <activity android:name=".AllSongsActivity" />
         <activity android:name=".Music2BrowserActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
