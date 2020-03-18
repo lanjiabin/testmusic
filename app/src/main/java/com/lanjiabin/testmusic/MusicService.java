@@ -100,6 +100,25 @@ public class MusicService {
         }
     }
 
+    public void playForList(int position) {
+        try {
+            mPlayer.reset();
+            String dataSource = (String) mMusicList.get(position).get("url");
+            setPlayName(dataSource);
+            mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mPlayer.setDataSource(dataSource);
+            mPlayer.prepare();
+            mPlayer.start();
+            mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer arg0) {
+                    next();
+                }
+            });
+
+        } catch (Exception e) {
+        }
+    }
+
     public void next() {
         mSongNum = mSongNum == mMusicList.size() - 1 ? 0 : mSongNum + 1;
         play();
