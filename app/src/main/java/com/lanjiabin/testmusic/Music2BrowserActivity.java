@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.Button;
 
 public class Music2BrowserActivity extends Activity{
-    private Button mAllSongsBtn,mNowPlayingBtn;
+    private Button mAllSongsBtn,mNowPlayingBtn,mPlayListsBtn,mAllVideosBtn;
     private Context mContext;
     private String[] mPermissions;
 
@@ -23,6 +23,7 @@ public class Music2BrowserActivity extends Activity{
         initView();
         requestPermission();
     }
+
     public void initView(){
         mPermissions = new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -32,6 +33,8 @@ public class Music2BrowserActivity extends Activity{
         setContentView(R.layout.activity_music2_browser);
         mAllSongsBtn=findViewById(R.id.allSongsBtn);
         mNowPlayingBtn=findViewById(R.id.nowPlayingBtn);
+        mPlayListsBtn=findViewById(R.id.playlistsBtn);
+        mAllVideosBtn=findViewById(R.id.allVideosBtn);
     }
     public void onClick(){
         mAllSongsBtn.setOnClickListener(new View.OnClickListener() {
@@ -48,6 +51,24 @@ public class Music2BrowserActivity extends Activity{
             public void onClick(View v) {
                 Intent intent=new Intent();
                 intent.setClass(mContext,NowPlayingActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        mPlayListsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent();
+                intent.setClass(mContext,MusicPlaylistsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        mAllVideosBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent();
+                intent.setClass(mContext,AllVideosActivity.class);
                 startActivity(intent);
             }
         });

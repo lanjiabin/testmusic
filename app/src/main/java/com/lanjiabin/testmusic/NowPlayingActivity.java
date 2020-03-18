@@ -2,10 +2,16 @@ package com.lanjiabin.testmusic;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,7 +19,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class NowPlayingActivity extends Activity{
-    private MusicService mMusicService;
     private Context mContext;
     private Handler mHandler;
     private int mMessageToUpdateMusicInfo = 0x101;
@@ -23,20 +28,31 @@ public class NowPlayingActivity extends Activity{
     private ImageView mSongImageV;
     private SeekBar mSongSeekBar;
     private Button mLoopBtn, mLastBtn, mPlayBtn, mNextBtn, mOrderBtn;
+    private MusicControlService mMusicControlService;
+
+    private ServiceConnection mMusicServiceConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
         musicThread();
-        seekBarThread();
         onClick();
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            Intent intent=new Intent(this,Music2BrowserActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     public void initView() {
-        setContentView(R.layout.activity_now_playing);
+        Log.v("showLog","ActivityOnCreate");
+        setContentView(R.layout.activity_music_playlists);
         mContext = getApplicationContext();
-        mMusicService = new MusicService(mContext);
         mSongNameTV = findViewById(R.id.songNameTV);
         mSongTimeTV = findViewById(R.id.songTimeTV);
         mSongImageV = findViewById(R.id.songImageV);
@@ -46,6 +62,22 @@ public class NowPlayingActivity extends Activity{
         mPlayBtn = findViewById(R.id.playBtn);
         mNextBtn = findViewById(R.id.nextBtn);
         mOrderBtn = findViewById(R.id.orderBtn);
+
+        mMusicServiceConnection=new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mMusicControlService= ((MusicBinder) service).getService();
+                seekBarThread();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+
+        Intent musicServiceIntent=new Intent(this,MusicControlService.class);
+        bindService(musicServiceIntent,mMusicServiceConnection,BIND_AUTO_CREATE);
     }
 
     private String setPlayInfo(int position, int max) {
@@ -75,12 +107,12 @@ public class NowPlayingActivity extends Activity{
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                int mMax = mMusicService.mPlayer.getDuration();
+                int mMax = mMusicControlService.mPlayer.getDuration();
                 if (msg.what == mMessageToUpdateMusicInfo) {
                     try {
                         mSongSeekBar.setProgress(msg.arg1);
                         mSongTimeTV.setText(setPlayInfo(msg.arg2 / 1000, mMax / 1000));
-                        mSongNameTV.setText(mMusicService.mSongName);
+                        mSongNameTV.setText(mMusicControlService.mSongName);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -105,9 +137,9 @@ public class NowPlayingActivity extends Activity{
     public void runThread() {
         int position, mMax, sMax;
         while (!Thread.currentThread().isInterrupted()) {
-            if (mMusicService.mPlayer != null && mMusicService.mPlayer.isPlaying()) {
-                position = mMusicService.getCurrentProgress();
-                mMax = mMusicService.mPlayer.getDuration();
+            if (mMusicControlService.mPlayer != null && mMusicControlService.mPlayer.isPlaying()) {
+                position = mMusicControlService.getCurrentProgress();
+                mMax = mMusicControlService.mPlayer.getDuration();
                 sMax = mSongSeekBar.getMax();
                 Message m = mHandler.obtainMessage();
                 m.arg1 = position * sMax / mMax;
@@ -129,7 +161,7 @@ public class NowPlayingActivity extends Activity{
             @Override
             public void onClick(View v) {
                 try {
-                    mMusicService.last();
+                    mMusicControlService.last();
                 } catch (Exception e) {
                 }
             }
@@ -140,13 +172,13 @@ public class NowPlayingActivity extends Activity{
             public void onClick(View v) {
                 try {
                     if (mStarOrPause == 1) {
-                        mMusicService.play();
+                        mMusicControlService.play();
                         mStarOrPause++;
                     } else {
-                        if (!mMusicService.mPlayer.isPlaying()) {
-                            mMusicService.goPlay();
-                        } else if (mMusicService.mPlayer.isPlaying()) {
-                            mMusicService.pause();
+                        if (!mMusicControlService.mPlayer.isPlaying()) {
+                            mMusicControlService.goPlay();
+                        } else if (mMusicControlService.mPlayer.isPlaying()) {
+                            mMusicControlService.pause();
                         }
                     }
                 } catch (Exception e) {
@@ -158,7 +190,7 @@ public class NowPlayingActivity extends Activity{
             @Override
             public void onClick(View v) {
                 try {
-                    mMusicService.next();
+                    mMusicControlService.next();
                 } catch (Exception e) {
                 }
             }
@@ -172,11 +204,48 @@ public class NowPlayingActivity extends Activity{
             @Override
             public void onStopTrackingTouch(SeekBar mSeekBar) {
                 int progress = mSeekBar.getProgress();
-                int musicMax = mMusicService.mPlayer.getDuration();
+                int musicMax = mMusicControlService.mPlayer.getDuration();
                 int seekBarMax = mSeekBar.getMax();
-                mMusicService.mPlayer
+                mMusicControlService.mPlayer
                         .seekTo(musicMax * progress / seekBarMax);
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v("showLog","ActivityOnStart");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.v("showLog","ActivityOnRestart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.v("showLog","ActivityOnResume");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.v("showLog","ActivityOnPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.v("showLog","ActivityOnStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mMusicServiceConnection);
+        Log.v("showLog","ActivityOnDestroy");
     }
 }

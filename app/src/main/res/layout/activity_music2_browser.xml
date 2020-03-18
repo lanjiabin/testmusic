@@ -43,6 +43,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/number_3" />
             <Button
+                android:id="@+id/allVideosBtn"
                 style="@style/Music_Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,6 +56,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/number_4" />
             <Button
+                android:id="@+id/playlistsBtn"
                 style="@style/Music_Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
