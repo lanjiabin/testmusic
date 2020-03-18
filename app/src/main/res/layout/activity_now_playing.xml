@@ -16,7 +16,7 @@
     <ImageView
         android:id="@+id/songImageV"
         android:layout_gravity="center_horizontal"
-        android:src="@color/colorAccent"
+        android:src="@android:color/black"
         android:layout_width="100dp"
         android:layout_height="100dp"/>
     <SeekBar

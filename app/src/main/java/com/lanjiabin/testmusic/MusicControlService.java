@@ -53,6 +53,7 @@ public class MusicControlService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mPlayer.release();
     }
 
 

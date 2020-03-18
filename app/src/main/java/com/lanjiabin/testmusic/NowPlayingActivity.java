@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class NowPlayingActivity extends Activity{
+public class NowPlayingActivity extends Activity {
     private Context mContext;
     private Handler mHandler;
     private int mMessageToUpdateMusicInfo = 0x101;
@@ -51,7 +51,7 @@ public class NowPlayingActivity extends Activity{
     }
 
     public void initView() {
-        Log.v("showLog","ActivityOnCreate");
+        Log.v("showLog", "ActivityOnCreate");
         setContentView(R.layout.activity_now_playing);
         mContext = getApplicationContext();
         mSongNameTV = findViewById(R.id.songNameTV);
@@ -64,10 +64,10 @@ public class NowPlayingActivity extends Activity{
         mNextBtn = findViewById(R.id.nextBtn);
         mOrderBtn = findViewById(R.id.orderBtn);
 
-        mMusicServiceConnection=new ServiceConnection() {
+        mMusicServiceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                mMusicControlService= ((MusicBinder) service).getService();
+                mMusicControlService = ((MusicBinder) service).getService();
                 seekBarThread();
             }
 
@@ -77,8 +77,8 @@ public class NowPlayingActivity extends Activity{
             }
         };
 
-        Intent musicServiceIntent=new Intent(this,MusicControlService.class);
-        bindService(musicServiceIntent,mMusicServiceConnection,BIND_AUTO_CREATE);
+        Intent musicServiceIntent = new Intent(this, MusicControlService.class);
+        bindService(musicServiceIntent, mMusicServiceConnection, BIND_AUTO_CREATE);
     }
 
     private String setPlayInfo(int position, int max) {
@@ -198,9 +198,13 @@ public class NowPlayingActivity extends Activity{
 
         mSongSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar mSeekBar, int i, boolean b) {}
+            public void onProgressChanged(SeekBar mSeekBar, int i, boolean b) {
+            }
+
             @Override
-            public void onStartTrackingTouch(SeekBar mSeekBar) {}
+            public void onStartTrackingTouch(SeekBar mSeekBar) {
+            }
+
             @Override
             public void onStopTrackingTouch(SeekBar mSeekBar) {
                 int progress = mSeekBar.getProgress();
@@ -210,42 +214,57 @@ public class NowPlayingActivity extends Activity{
                         .seekTo(musicMax * progress / seekBarMax);
             }
         });
+
+        mLoopBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMusicControlService.mPlayer.isLooping()){
+                    mMusicControlService.mPlayer.setLooping(false);
+                    mLoopBtn.setText("loop");
+                }else {
+                    mMusicControlService.mPlayer.setLooping(true);
+                    mLoopBtn.setText("Loop One");
+                }
+
+
+            }
+        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.v("showLog","ActivityOnStart");
+        Log.v("showLog", "ActivityOnStart");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.v("showLog","ActivityOnRestart");
+        Log.v("showLog", "ActivityOnRestart");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.v("showLog","ActivityOnResume");
+        Log.v("showLog", "ActivityOnResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.v("showLog","ActivityOnPause");
+        Log.v("showLog", "ActivityOnPause");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.v("showLog","ActivityOnStop");
+        Log.v("showLog", "ActivityOnStop");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mMusicServiceConnection);
-        Log.v("showLog","ActivityOnDestroy");
+        Log.v("showLog", "ActivityOnDestroy");
     }
 }
