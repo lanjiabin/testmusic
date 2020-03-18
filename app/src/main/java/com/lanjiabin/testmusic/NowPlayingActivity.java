@@ -39,6 +39,7 @@ public class NowPlayingActivity extends Activity{
         musicThread();
         onClick();
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK){
@@ -51,7 +52,7 @@ public class NowPlayingActivity extends Activity{
 
     public void initView() {
         Log.v("showLog","ActivityOnCreate");
-        setContentView(R.layout.activity_music_playlists);
+        setContentView(R.layout.activity_now_playing);
         mContext = getApplicationContext();
         mSongNameTV = findViewById(R.id.songNameTV);
         mSongTimeTV = findViewById(R.id.songTimeTV);
@@ -156,7 +157,6 @@ public class NowPlayingActivity extends Activity{
     }
 
     public void onClick() {
-
         mLastBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
