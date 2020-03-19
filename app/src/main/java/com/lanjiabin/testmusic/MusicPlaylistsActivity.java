@@ -19,14 +19,14 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MusicPlaylistsActivity extends Activity {
     private ListView mPlaylistsLV;
     private List<String> mPlayList;
-    private Button mAddViewBtn,mRemoveViewBtn;
+    private Button mAddViewBtn, mRemoveViewBtn;
     private View mAlterDialogView;
     private EditText mPlaylistEdit;
-    private SharedPreferences mSpf;
 
     private int ItemSelectedPosition;
 
@@ -41,27 +41,19 @@ public class MusicPlaylistsActivity extends Activity {
         setContentView(R.layout.activity_music_playlists);
         mPlaylistsLV = findViewById(R.id.playlistsLV);
         mAddViewBtn = findViewById(R.id.addViewBtn);
-        mRemoveViewBtn=findViewById(R.id.removeViewBtn);
+        mRemoveViewBtn = findViewById(R.id.removeViewBtn);
         mAlterDialogView = View.inflate(this, R.layout.alterdialog_playlists_name, null);
         mPlaylistEdit = mAlterDialogView.findViewById(R.id.playlistEdit);
 
         mPlayList = new ArrayList<String>();
-        mSpf = super.getSharedPreferences("musicPlaylists",MODE_PRIVATE);
-        setListViewAdapter();
+//        setListViewAdapter();
     }
 
     public void setListViewAdapter() {
-        String sizeString = mSpf.getString("size","0");
-        Log.v("setListViewAdapter","sizeString="+sizeString);
-        int sizeInt=Integer.parseInt(sizeString);
-        if (sizeInt<=0){return;}
-
-        String[] musicPlayListName = new String[sizeInt];
+        String[] musicPlayListName = new String[99];
         int j = 0;
-        for (int i=0;i<sizeInt;i++) {
-            String playlistName=mSpf.getString("playlistName"+(i+1),"0");
-            Log.v("showPosition","playlistName=="+playlistName);
-            if ("0".equals(playlistName)){return;}
+        for (int i = 0; i < 99; i++) {
+            String playlistName = "";
             musicPlayListName[j++] = playlistName;
         }
 
@@ -81,27 +73,23 @@ public class MusicPlaylistsActivity extends Activity {
         mRemoveViewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.v("showPosition","ItemSelectedPosition1=="+ItemSelectedPosition);
-                SharedPreferences.Editor editor = mSpf.edit();
-                editor.remove("playlistName"+ItemSelectedPosition);
-                editor.apply();
-                setListViewAdapter();
+
             }
         });
 
         mPlaylistsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MusicPlaylistsActivity.this,""+position,Toast.LENGTH_LONG).show();
+                Toast.makeText(MusicPlaylistsActivity.this, "" + position, Toast.LENGTH_LONG).show();
             }
         });
 
         mPlaylistsLV.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MusicPlaylistsActivity.this,"选择了"+position,Toast.LENGTH_LONG).show();
-                ItemSelectedPosition=position;
-                Log.v("showPosition","ItemSelectedPosition2=="+ItemSelectedPosition);
+                Toast.makeText(MusicPlaylistsActivity.this, "选择了" + position, Toast.LENGTH_LONG).show();
+                ItemSelectedPosition = position;
+                Log.v("showPosition", "ItemSelectedPosition==" + ItemSelectedPosition);
             }
 
             @Override
@@ -121,17 +109,8 @@ public class MusicPlaylistsActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                String number = mSpf.getString("size","0");
-                Log.v("showNumber","number="+number);
-                int size=Integer.parseInt(number);
-                size=size+1;
-
-                SharedPreferences.Editor editor = mSpf.edit();
-                editor.putString("size",size+"");
-                editor.putString("playlistName"+size,mPlaylistEdit.getText().toString());
-                editor.apply();
                 mPlaylistEdit.setText("");
-                setListViewAdapter();
+//                setListViewAdapter();
             }
         });
 
