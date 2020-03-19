@@ -2,6 +2,7 @@ package com.lanjiabin.testmusic;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -15,9 +16,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +30,8 @@ public class MusicPlaylistsActivity extends Activity {
     private Button mAddViewBtn, mRemoveViewBtn;
     private View mAlterDialogView;
     private EditText mPlaylistEdit;
+    private Context mContext;
+    private ArrayList<HashMap<String, String>> playListArrayList;
 
     private int ItemSelectedPosition;
 
@@ -38,6 +43,8 @@ public class MusicPlaylistsActivity extends Activity {
     }
 
     public void initView() {
+        mContext = getApplicationContext();
+        playListArrayList = MusicDBService.getInstance().queryAllPlaylists(mContext);
         setContentView(R.layout.activity_music_playlists);
         mPlaylistsLV = findViewById(R.id.playlistsLV);
         mAddViewBtn = findViewById(R.id.addViewBtn);
@@ -46,14 +53,18 @@ public class MusicPlaylistsActivity extends Activity {
         mPlaylistEdit = mAlterDialogView.findViewById(R.id.playlistEdit);
 
         mPlayList = new ArrayList<String>();
-//        setListViewAdapter();
+
+        if (playListArrayList != null) {
+            setListViewAdapter();
+        }
+
     }
 
     public void setListViewAdapter() {
-        String[] musicPlayListName = new String[99];
+        String[] musicPlayListName = new String[playListArrayList.size()];
         int j = 0;
-        for (int i = 0; i < 99; i++) {
-            String playlistName = "";
+        for (int i = 0; i < playListArrayList.size(); i++) {
+            String playlistName = playListArrayList.get(i).get("playlistname");
             musicPlayListName[j++] = playlistName;
         }
 
@@ -108,9 +119,11 @@ public class MusicPlaylistsActivity extends Activity {
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                MusicDBService.getInstance().queryAllPlaylists(mContext);
+                MusicDBService.getInstance().insertForPlaylistName(mContext,mPlaylistEdit.getText().toString(),"now","now");
+                playListArrayList = MusicDBService.getInstance().queryAllPlaylists(mContext);
+                setListViewAdapter();
                 mPlaylistEdit.setText("");
-//                setListViewAdapter();
             }
         });
 
