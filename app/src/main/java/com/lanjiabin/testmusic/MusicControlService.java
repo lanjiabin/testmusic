@@ -28,19 +28,22 @@ public class MusicControlService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.v("showLog","ServiceOnCreate");
-        this.mContext=getApplicationContext();
+        Log.v("showLog", "ServiceOnCreate");
+        this.mContext = getApplicationContext();
         mPlayer = new MediaPlayer();
         mMusicList = new ArrayList<Map<String, Object>>();
         List<MusicFileInfo> musicFileInfoList = getMusicFileInfo();
         for (Iterator iterator = musicFileInfoList.iterator(); iterator.hasNext(); ) {
             MusicFileInfo musicFileInfo = (MusicFileInfo) iterator.next();
             Map<String, Object> map = new HashMap<String, Object>();
+            map.put("id", String.valueOf(musicFileInfo.getId()));
             map.put("title", musicFileInfo.getTitle());
-            map.put("Artist", musicFileInfo.getArtist());
+            map.put("artist", musicFileInfo.getArtist());
             map.put("duration", String.valueOf(musicFileInfo.getDuration()));
             map.put("size", String.valueOf(musicFileInfo.getSize()));
             map.put("url", musicFileInfo.getUrl());
+            map.put("quality", musicFileInfo.getQuality());
+            map.put("channel", musicFileInfo.getChannel());
             mMusicList.add(map);
         }
     }
@@ -55,7 +58,6 @@ public class MusicControlService extends Service {
         super.onDestroy();
         mPlayer.release();
     }
-
 
 
     @Override
@@ -100,6 +102,17 @@ public class MusicControlService extends Service {
                 musicFileInfo.setQuality(quality);
                 musicFileInfo.setChannel(channel);
                 musicFileIfs.add(musicFileInfo);
+                MusicDBService.getInstance().replaceAllSongsList(mContext,
+                        String.valueOf(id),
+                        title,
+                        artist,
+                        String.valueOf(duration),
+                        String.valueOf(size),
+                        url,
+                        channel,
+                        quality,
+                        "2020-03-20",
+                        "2020-03-20");
             }
         }
         return musicFileIfs;
@@ -167,13 +180,15 @@ public class MusicControlService extends Service {
         mSongName = name.substring(0, index);
     }
 }
-    class MusicBinder extends Binder{
-        MusicControlService mMusicServiceControl;
-        public MusicBinder(MusicControlService musicServiceControl) {
-            mMusicServiceControl=musicServiceControl;
-        }
 
-        public MusicControlService getService(){
-            return mMusicServiceControl;
-        }
+class MusicBinder extends Binder {
+    MusicControlService mMusicServiceControl;
+
+    public MusicBinder(MusicControlService musicServiceControl) {
+        mMusicServiceControl = musicServiceControl;
     }
+
+    public MusicControlService getService() {
+        return mMusicServiceControl;
+    }
+}

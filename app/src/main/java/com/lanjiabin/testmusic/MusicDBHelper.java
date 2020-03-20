@@ -20,8 +20,7 @@ public class MusicDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         db.execSQL("CREATE TABLE IF NOT EXISTS allsongslist"+
-                "(_id INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                    "musicid VARCHAR," +
+                    "(musicid VARCHAR PRIMARY KEY," +
                     "playlistname VARCHAR," +
                     "musictitle VARCHAR," +
                     "musicartist VARCHAR," +
@@ -34,8 +33,7 @@ public class MusicDBHelper extends SQLiteOpenHelper {
                     "musicquality VARCHAR)");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS playlist"+
-                "(_id INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                "playlistname VARCHAR," +
+                "(playlistname VARCHAR PRIMARY KEY," +
                 "playlistcreatetime VARCHAR," +
                 "playlistupdatetime VARCHAR)");
 

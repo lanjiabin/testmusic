@@ -43,7 +43,7 @@ public class NowPlayingActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK){
-            Intent intent=new Intent(this,Music2BrowserActivity.class);
+            Intent intent=new Intent(NowPlayingActivity.this,Music2BrowserActivity.class);
             startActivity(intent);
             return true;
         }

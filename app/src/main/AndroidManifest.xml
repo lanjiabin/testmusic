@@ -17,10 +17,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".AllVideosActivity"
+
+
+
+
+        <activity android:name=".AllSongsNoActionActivity"/>
+        <activity android:name=".MusicPlaylistsTreeActivity" />
+        <activity
+            android:name=".AllVideosActivity"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MUSIC_PLAYER" />
+
                 <category android:name="android.intent.category.APP_MUSIC" />
             </intent-filter>
         </activity>
@@ -30,16 +38,25 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".MusicPlaylistsActivity"
-            android:launchMode="singleInstance"/>
+        <activity android:name=".MusicPlaylistsActivity" />
+        <activity
+            android:name=".NowPlayingActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".AllSongsActivity"
+            android:launchMode="singleTop" />
 
-        <activity android:name=".NowPlayingActivity"
-            android:launchMode="singleTop"/>
 
-        <activity android:name=".AllSongsActivity" />
+
+
+
+
+
+
         <activity android:name=".Music2BrowserActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

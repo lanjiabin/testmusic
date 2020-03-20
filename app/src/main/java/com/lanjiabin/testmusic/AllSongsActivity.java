@@ -7,12 +7,16 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AllSongsActivity extends Activity {
@@ -20,6 +24,7 @@ public class AllSongsActivity extends Activity {
     private MusicControlService mMusicControlService;
     private Context mContext;
     private ServiceConnection mMusicServiceConnection;
+    private ArrayList<HashMap<String, String>> mPlayAllSongListArrayList;
 
 
     @Override
@@ -30,11 +35,22 @@ public class AllSongsActivity extends Activity {
         OnClick();
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            Intent intent=new Intent(mContext,Music2BrowserActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     public void initView() {
         mContext=getApplicationContext();
         setContentView(R.layout.activity_all_songs);
         mAllSongsLV = findViewById(R.id.allSongsLV);
         mContext=getApplicationContext();
+        mPlayAllSongListArrayList=MusicDBService.getInstance().queryAllSongsList(mContext);
 
         mMusicServiceConnection = new ServiceConnection() {
             @Override
@@ -53,14 +69,15 @@ public class AllSongsActivity extends Activity {
     }
 
     private void setListViewAdapter() {
-        String[] musicNameArr = new String[mMusicControlService.mMusicList.size()];
-        int i = 0;
-        for (Map<String, Object> path : mMusicControlService.mMusicList) {
-            File file = new File(String.valueOf(path.get("url")));
-            musicNameArr[i++] = file.getName();
+        String[] musicAllSongList = new String[mPlayAllSongListArrayList.size()];
+        int j = 0;
+        for (int i = 0; i < mPlayAllSongListArrayList.size(); i++) {
+            String playlistName = mPlayAllSongListArrayList.get(i).get("musictitle");
+            musicAllSongList[j++] = playlistName;
         }
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
-                musicNameArr);
+                musicAllSongList);
         mAllSongsLV = findViewById(R.id.allSongsLV);
         mAllSongsLV.setAdapter(adapter);
     }
@@ -69,6 +86,21 @@ public class AllSongsActivity extends Activity {
         mAllSongsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                List<Map<String, Object>> myMusicList;
+                myMusicList = new ArrayList<Map<String, Object>>();
+                for (int i=0;i<mPlayAllSongListArrayList.size();i++){
+                    Map<String, Object> map = new HashMap<String, Object>();
+                    map.put("id", mPlayAllSongListArrayList.get(i).get("musicid"));
+                    map.put("title", mPlayAllSongListArrayList.get(i).get("musictitle"));
+                    map.put("artist", mPlayAllSongListArrayList.get(i).get("musicartist"));
+                    map.put("duration", mPlayAllSongListArrayList.get(i).get("musicduration"));
+                    map.put("size", mPlayAllSongListArrayList.get(i).get("musicsize"));
+                    map.put("url", mPlayAllSongListArrayList.get(i).get("musicurl"));
+                    map.put("quality", mPlayAllSongListArrayList.get(i).get("musicchannel"));
+                    map.put("channel", mPlayAllSongListArrayList.get(i).get("musicquality"));
+                    myMusicList.add(map);
+                }
+                mMusicControlService.mMusicList=myMusicList;
                 mMusicControlService.mSongNum=position;
                 mMusicControlService.play();
                 Intent intent=new Intent(mContext,NowPlayingActivity.class);

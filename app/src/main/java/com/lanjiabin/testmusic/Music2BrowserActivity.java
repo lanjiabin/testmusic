@@ -2,11 +2,14 @@ package com.lanjiabin.testmusic;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
@@ -17,6 +20,9 @@ public class Music2BrowserActivity extends Activity{
     private Button mAllSongsBtn,mNowPlayingBtn,mPlayListsBtn,mAllVideosBtn;
     private Context mContext;
     private String[] mPermissions;
+
+    private MusicControlService mMusicControlService;
+    private ServiceConnection mMusicServiceConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,21 @@ public class Music2BrowserActivity extends Activity{
         mAllVideosBtn=findViewById(R.id.allVideosBtn);
     }
     public void onClick(){
+
+        mMusicServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mMusicControlService = ((MusicBinder) service).getService();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        Intent musicServiceIntent = new Intent(mContext, MusicControlService.class);
+        bindService(musicServiceIntent, mMusicServiceConnection, BIND_AUTO_CREATE);
+
         mAllSongsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,4 +136,9 @@ public class Music2BrowserActivity extends Activity{
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mMusicServiceConnection);
+    }
 }
