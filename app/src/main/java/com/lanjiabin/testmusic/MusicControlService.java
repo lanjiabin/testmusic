@@ -46,6 +46,7 @@ public class MusicControlService extends Service {
             map.put("channel", musicFileInfo.getChannel());
             mMusicList.add(map);
         }
+        MusicDBService.getInstance().setMusicList(mMusicList);
     }
 
     @Override

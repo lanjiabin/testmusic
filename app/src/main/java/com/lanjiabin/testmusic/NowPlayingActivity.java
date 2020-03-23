@@ -12,11 +12,14 @@ import android.os.Message;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class NowPlayingActivity extends Activity {
     private Context mContext;
@@ -26,6 +29,7 @@ public class NowPlayingActivity extends Activity {
 
     private TextView mSongNameTV, mSongTimeTV;
     private ImageView mSongImageV;
+    private Button mMenuBtn;
     private SeekBar mSongSeekBar;
     private Button mLoopBtn, mLastBtn, mPlayBtn, mNextBtn, mOrderBtn;
     private MusicControlService mMusicControlService;
@@ -42,12 +46,34 @@ public class NowPlayingActivity extends Activity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        super.onKeyDown(keyCode, event);
+
+        if (keyCode==KeyEvent.KEYCODE_BACK){
             Intent intent=new Intent(NowPlayingActivity.this,Music2BrowserActivity.class);
             startActivity(intent);
             return true;
         }
-        return super.onKeyDown(keyCode, event);
+        if (keyCode==KeyEvent.KEYCODE_MENU){
+            showPopupMenu(mMenuBtn);
+            return true;
+        }
+        if (keyCode==KeyEvent.KEYCODE_ENTER){
+            try {
+                if (mStarOrPause == 1) {
+                    mMusicControlService.play();
+                    mStarOrPause++;
+                } else {
+                    if (!mMusicControlService.mPlayer.isPlaying()) {
+                        mMusicControlService.goPlay();
+                    } else if (mMusicControlService.mPlayer.isPlaying()) {
+                        mMusicControlService.pause();
+                    }
+                }
+            } catch (Exception e) {
+            }
+            return true;
+        }
+        return false;
     }
 
     public void initView() {
@@ -63,6 +89,7 @@ public class NowPlayingActivity extends Activity {
         mPlayBtn = findViewById(R.id.playBtn);
         mNextBtn = findViewById(R.id.nextBtn);
         mOrderBtn = findViewById(R.id.orderBtn);
+        mMenuBtn=findViewById(R.id.menuBtn);
 
         mMusicServiceConnection = new ServiceConnection() {
             @Override
@@ -229,38 +256,32 @@ public class NowPlayingActivity extends Activity {
 
             }
         });
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.v("showLog", "ActivityOnStart");
+        mMenuBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupMenu(mMenuBtn);
+            }
+        });
     }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.v("showLog", "ActivityOnRestart");
+    public void showPopupMenu(View view){
+        mMenuBtn.setText("Select");
+        PopupMenu popupMenu=new PopupMenu(mContext,view);
+        popupMenu.getMenuInflater().inflate(R.menu.sample_menu,popupMenu.getMenu());
+        popupMenu.show();
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return true;
+            }
+        });
+        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            @Override
+            public void onDismiss(PopupMenu menu) {
+                mMenuBtn.setText("Menu");
+            }
+        });
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.v("showLog", "ActivityOnResume");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.v("showLog", "ActivityOnPause");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.v("showLog", "ActivityOnStop");
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

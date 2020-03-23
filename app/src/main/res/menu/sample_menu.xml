@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/playItem"
+        android:icon="@mipmap/ic_launcher"
+        android:title="play" />
+
+    <item
+        android:id="@+id/refreshItem"
+        android:icon="@mipmap/ic_launcher"
+        android:title="Refresh" />
+
+    <item
+        android:id="@+id/addItem"
+        android:icon="@mipmap/ic_launcher"
+        android:title="Add to playlist" />
+
+    <item
+        android:id="@+id/deleteItem"
+        android:icon="@mipmap/ic_launcher"
+        android:title="delete" />
+    <item
+        android:id="@+id/sendItem"
+        android:icon="@mipmap/ic_launcher"
+        android:title="Send" />
+
+    <item
+        android:id="@+id/useItem"
+        android:icon="@mipmap/ic_launcher"
+        android:title="Use" />
+
+    <item
+        android:id="@+id/DetailsItem"
+        android:icon="@mipmap/ic_launcher"
+        android:title="Details" />
+
+</menu>

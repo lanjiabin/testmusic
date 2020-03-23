@@ -4,8 +4,11 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MusicDBService {
+    private static List<Map<String, Object>> mMusicList;
     private static MusicDBService musicDBService = null;
     private String mSql = "INSERT INTO allsongslist(musicid,musictitle,musicartist,musicduration,musicsize,musicurl,musicchannel,musicquality,playlistcreatetime,playlistupdatetime) VALUES(?,?,?,?,?,?,?,?,?,?)";
 
@@ -16,7 +19,16 @@ public class MusicDBService {
         if (musicDBService == null) {
             musicDBService = new MusicDBService();
         }
+        mMusicList=new ArrayList<Map<String, Object>>();
         return musicDBService;
+    }
+
+    public List<Map<String, Object>> getMusicList() {
+        return mMusicList;
+    }
+
+    public void setMusicList(List<Map<String, Object>> mMusicList) {
+        this.mMusicList = mMusicList;
     }
 
     /**
@@ -104,16 +116,27 @@ public class MusicDBService {
                                     String playlistUpdateTime) {
         MusicDBManager musicDBManager = new MusicDBManager(context);
         MusicDBHelper helper = new MusicDBHelper(context);
-        musicDBManager.updateSQLite(mSql, new String[]{musicId,
-                                                      musicTitle,
-                                                      musicArtist,
-                                                      musicDuration,
-                                                      musicSize,
-                                                      musicUrl,
-                                                      musicChannel,
-                                                      musicQuality,
-                                                      playlistCreateTime,
-                                                      playlistUpdateTime});
+        if (!mMusicList.isEmpty()){
+            for (int i=0;i<mMusicList.size();i++){
+                if (musicId.equals(mMusicList.get(i).get("id"))){
+                    return;
+                }else {
+                    musicDBManager.updateSQLite(mSql, new String[]{musicId,
+                            musicTitle,
+                            musicArtist,
+                            musicDuration,
+                            musicSize,
+                            musicUrl,
+                            musicChannel,
+                            musicQuality,
+                            playlistCreateTime,
+                            playlistUpdateTime});
+                    return;
+                }
+
+            }
+        }
+
 
     }
 

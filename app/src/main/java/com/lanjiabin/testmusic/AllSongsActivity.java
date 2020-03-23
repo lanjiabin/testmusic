@@ -8,10 +8,14 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +25,7 @@ import java.util.Map;
 
 public class AllSongsActivity extends Activity {
     private ListView mAllSongsLV;
+    private Button mMenuBtn;
     private MusicControlService mMusicControlService;
     private Context mContext;
     private ServiceConnection mMusicServiceConnection;
@@ -49,6 +54,7 @@ public class AllSongsActivity extends Activity {
         mContext=getApplicationContext();
         setContentView(R.layout.activity_all_songs);
         mAllSongsLV = findViewById(R.id.allSongsLV);
+        mMenuBtn=findViewById(R.id.menuBtn);
         mContext=getApplicationContext();
         mPlayAllSongListArrayList=MusicDBService.getInstance().queryAllSongsList(mContext);
 
@@ -105,6 +111,33 @@ public class AllSongsActivity extends Activity {
                 mMusicControlService.play();
                 Intent intent=new Intent(mContext,NowPlayingActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        mMenuBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupMenu(v);
+            }
+        });
+    }
+
+    public void showPopupMenu(View view){
+        mMenuBtn.setText("Select");
+        PopupMenu popupMenu=new PopupMenu(mContext,view);
+        popupMenu.getMenuInflater().inflate(R.menu.sample_menu,popupMenu.getMenu());
+        popupMenu.show();
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Toast.makeText(mContext,item.getTitle().toString(),Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });
+        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            @Override
+            public void onDismiss(PopupMenu menu) {
+                mMenuBtn.setText("Menu");
             }
         });
     }

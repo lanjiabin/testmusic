@@ -6,104 +6,178 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".NowPlayingActivity">
-    <TextView
-        android:id="@+id/songNameTV"
-        android:text="歌曲名字"
-        android:layout_marginTop="20dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <ImageView
-        android:id="@+id/songImageV"
-        android:layout_gravity="center_horizontal"
-        android:src="@android:color/black"
-        android:layout_width="100dp"
-        android:layout_height="100dp"/>
-    <SeekBar
-        android:id="@+id/songSeekBar"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/songTimeTV"
-            android:text="00:00:00 / 00:00:09"
-            android:layout_weight="1"
-            android:layout_marginLeft="15dp"
+        android:layout_height="250dp"
+        android:layout_weight="9"
+        android:background="@android:color/black"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:background="@android:color/white"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/songNameTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp" />
+
+            <ImageView
+                android:id="@+id/songImageV"
+                android:layout_width="270dp"
+                android:layout_height="300dp"
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@android:color/holo_blue_light"
+                android:src="@drawable/ic_music" />
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/songSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/background_dark"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/songTimeTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginStart="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:text="00:00:00 / 00:00:00"
+                android:textColor="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/songVolumeTV"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleY="0.7"
+                android:scaleX="0.7"
+                android:layout_gravity="end"
+                android:layout_marginRight="15dp"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:background="@drawable/ic_music_volume" />
+
+            <TextView
+                android:id="@+id/songVolumeTV2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginRight="15dp"
+                android:layout_weight="0"
+                android:gravity="end"
+                android:text="音量"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:layout_gravity="left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/songVolumeTV"
-            android:text="音量"
-            android:layout_weight="1"
+            android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:layout_gravity="end"
-            android:gravity="end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:background="@android:color/black"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/loopBtn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleY="0.7"
+                android:scaleX="0.7"
+                android:layout_weight="1"
+                android:background="@drawable/ic_music_loop"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/lastBtn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleY="0.7"
+                android:scaleX="0.7"
+                android:layout_weight="1"
+                android:background="@drawable/ic_music_last"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/playBtn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleY="0.7"
+                android:scaleX="0.7"
+                android:layout_weight="1"
+                android:background="@drawable/ic_music_play"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/nextBtn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleY="0.7"
+                android:scaleX="0.7"
+                android:layout_weight="1"
+                android:background="@drawable/ic_music_next"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/orderBtn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleY="0.7"
+                android:scaleX="0.7"
+                android:layout_weight="1"
+                android:background="@drawable/ic_music_shuffle"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginRight="15dp"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/loopBtn"
-            android:text="loop"
-            android:textAllCaps="false"
-            android:layout_weight="1"
-            android:background="@null"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <Button
-            android:id="@+id/lastBtn"
-            android:text="last"
-            android:textAllCaps="false"
-            android:layout_weight="1"
-            android:background="@null"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <Button
-            android:id="@+id/playBtn"
-            android:text="play"
-            android:textAllCaps="false"
-            android:layout_weight="1"
-            android:background="@null"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <Button
-            android:id="@+id/nextBtn"
-            android:text="next"
-            android:textAllCaps="false"
-            android:layout_weight="1"
-            android:background="@null"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <Button
-            android:id="@+id/orderBtn"
-            android:text="order"
-            android:textAllCaps="false"
-            android:layout_weight="1"
-            android:background="@null"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+        android:layout_height="15dp"
+        android:layout_gravity="bottom"
+        android:layout_weight="1"
+        android:background="@android:color/black"
+        android:orientation="horizontal">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/menuBtn"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:gravity="left|center_vertical"
+            android:text="Menu"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
 
+        <Button
+            android:id="@+id/backBtn"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:gravity="right|center_vertical"
+            android:text="Back"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
 

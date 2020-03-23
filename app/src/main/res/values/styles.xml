@@ -29,4 +29,9 @@
         <item name="android:layout_marginStart">5dp</item>
     </style>
 
+    <style name="Theme_NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
 </resources>
