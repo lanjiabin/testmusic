@@ -125,7 +125,6 @@ public class MusicPlaylistsActivity extends Activity {
 
                 Intent intent=new Intent(mContext,MusicPlaylistsTreeActivity.class);
                 intent.putExtra("playListName",mPlayListName);
-//                setResult(Intent.FLAG_ACTIVITY_NO_ANIMATION,intent);
                 startActivity(intent);
             }
         });

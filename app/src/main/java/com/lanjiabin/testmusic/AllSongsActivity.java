@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,7 +37,6 @@ public class AllSongsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-
         OnClick();
     }
 
@@ -47,14 +47,26 @@ public class AllSongsActivity extends Activity {
             startActivity(intent);
             return true;
         }
+
         return super.onKeyDown(keyCode, event);
+    }
+
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
+            showPopupMenu(mMenuBtn);
+            Log.v("onKeyDown","KEYCODE_MENU");
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     public void initView() {
         mContext=getApplicationContext();
         setContentView(R.layout.activity_all_songs);
         mAllSongsLV = findViewById(R.id.allSongsLV);
-        mMenuBtn=findViewById(R.id.menuBtn);
+        mMenuBtn=findViewById(R.id.allMenuBtn);
         mContext=getApplicationContext();
         mPlayAllSongListArrayList=MusicDBService.getInstance().queryAllSongsList(mContext);
 
@@ -110,6 +122,8 @@ public class AllSongsActivity extends Activity {
                 mMusicControlService.mSongNum=position;
                 mMusicControlService.play();
                 Intent intent=new Intent(mContext,NowPlayingActivity.class);
+                intent.putExtra("starOrPause",2);
+                intent.putExtra("CurrentPlaylistName","allSong");
                 startActivity(intent);
             }
         });
@@ -123,7 +137,7 @@ public class AllSongsActivity extends Activity {
     }
 
     public void showPopupMenu(View view){
-        mMenuBtn.setText("Select");
+//        mMenuBtn.setText("Select");
         PopupMenu popupMenu=new PopupMenu(mContext,view);
         popupMenu.getMenuInflater().inflate(R.menu.sample_menu,popupMenu.getMenu());
         popupMenu.show();
@@ -137,7 +151,7 @@ public class AllSongsActivity extends Activity {
         popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
             @Override
             public void onDismiss(PopupMenu menu) {
-                mMenuBtn.setText("Menu");
+//                mMenuBtn.setText("Menu");
             }
         });
     }

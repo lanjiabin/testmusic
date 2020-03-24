@@ -24,6 +24,7 @@ public class MusicControlService extends Service {
     public int mSongNum;
     public String mSongName;
     Context mContext = null;
+    public String mPlaylistName="allSong";
 
     @Override
     public void onCreate() {

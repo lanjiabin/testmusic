@@ -25,6 +25,7 @@ public class NowPlayingActivity extends Activity {
     private Context mContext;
     private Handler mHandler;
     private int mMessageToUpdateMusicInfo = 0x101;
+    private int mMessageToMusicListActivity = 0x102;
     private int mStarOrPause = 1;
 
     private TextView mSongNameTV, mSongTimeTV;
@@ -40,44 +41,65 @@ public class NowPlayingActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-        musicThread();
         onClick();
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        super.onKeyDown(keyCode, event);
+    public boolean dispatchKeyEvent(KeyEvent event) {
 
-        if (keyCode==KeyEvent.KEYCODE_BACK){
-            Intent intent=new Intent(NowPlayingActivity.this,Music2BrowserActivity.class);
-            startActivity(intent);
-            return true;
-        }
-        if (keyCode==KeyEvent.KEYCODE_MENU){
+        if (event.getKeyCode() == KeyEvent.KEYCODE_MENU && event.getAction() == KeyEvent.ACTION_UP) {
             showPopupMenu(mMenuBtn);
             return true;
         }
-        if (keyCode==KeyEvent.KEYCODE_ENTER){
-            try {
-                if (mStarOrPause == 1) {
-                    mMusicControlService.play();
-                    mStarOrPause++;
-                } else {
-                    if (!mMusicControlService.mPlayer.isPlaying()) {
-                        mMusicControlService.goPlay();
-                    } else if (mMusicControlService.mPlayer.isPlaying()) {
-                        mMusicControlService.pause();
+
+        if (event.getAction() != KeyEvent.ACTION_UP) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_BACK:
+                    Intent intent = new Intent(NowPlayingActivity.this, Music2BrowserActivity.class);
+                    startActivity(intent);
+                    Log.v("onKeyDown", "KEYCODE_BACK");
+                    return true;
+                case KeyEvent.KEYCODE_ENTER:
+                    try {
+                        if (mStarOrPause == 1) {
+                            mMusicControlService.play();
+                            mStarOrPause++;
+                            mPlayBtn.setBackground(getResources().getDrawable(R.drawable.ic_music_pause));
+                        } else {
+                            if (!mMusicControlService.mPlayer.isPlaying()) {
+                                mMusicControlService.goPlay();
+                                mPlayBtn.setBackground(getResources().getDrawable(R.drawable.ic_music_pause));
+                            } else if (mMusicControlService.mPlayer.isPlaying()) {
+                                mMusicControlService.pause();
+                                mPlayBtn.setBackground(getResources().getDrawable(R.drawable.ic_music_play));
+                            }
+                        }
+                    } catch (Exception ignored) {
                     }
-                }
-            } catch (Exception e) {
+                    return true;
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                    try {
+                        mMusicControlService.last();
+                        Log.v("onKeyDown", "KEYCODE_DPAD_LEFT");
+                        return true;
+                    } catch (Exception ignored) {
+                    }
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    try {
+                        mMusicControlService.next();
+                        return true;
+                    } catch (Exception ignored) {
+                    }
+                default:
+                    break;
             }
-            return true;
         }
-        return false;
+        return super.dispatchKeyEvent(event);
     }
 
     public void initView() {
-        Log.v("showLog", "ActivityOnCreate");
+        Intent intent = getIntent();
+        mStarOrPause = intent.getIntExtra("starOrPause", 1);
         setContentView(R.layout.activity_now_playing);
         mContext = getApplicationContext();
         mSongNameTV = findViewById(R.id.songNameTV);
@@ -89,13 +111,18 @@ public class NowPlayingActivity extends Activity {
         mPlayBtn = findViewById(R.id.playBtn);
         mNextBtn = findViewById(R.id.nextBtn);
         mOrderBtn = findViewById(R.id.orderBtn);
-        mMenuBtn=findViewById(R.id.menuBtn);
+        mMenuBtn = findViewById(R.id.menuBtn);
+        mSongNameTV.setSelected(true);
 
         mMusicServiceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 mMusicControlService = ((MusicBinder) service).getService();
                 seekBarThread();
+                Intent intent = getIntent();
+                if (intent.getStringExtra("CurrentPlaylistName")!=null){
+                    mMusicControlService.mPlaylistName=intent.getStringExtra("CurrentPlaylistName");
+                }
             }
 
             @Override
@@ -106,6 +133,7 @@ public class NowPlayingActivity extends Activity {
 
         Intent musicServiceIntent = new Intent(this, MusicControlService.class);
         bindService(musicServiceIntent, mMusicServiceConnection, BIND_AUTO_CREATE);
+        musicThread();
     }
 
     private String setPlayInfo(int position, int max) {
@@ -136,11 +164,35 @@ public class NowPlayingActivity extends Activity {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 int mMax = mMusicControlService.mPlayer.getDuration();
+                if (msg.what == mMessageToMusicListActivity) {
+                    Log.v("mPlaylistName","mPlaylistName="+mMusicControlService.mPlaylistName);
+                    if (mMusicControlService.mPlaylistName.equals("allSong")) {
+                        Intent goAllIntent = new Intent();
+                        goAllIntent.setClass(mContext, AllSongsActivity.class);
+                        startActivity(goAllIntent);
+                    } else {
+                        Intent goDivIntent = new Intent(mContext, MusicPlaylistsTreeActivity.class);
+                        goDivIntent.putExtra("playListName", mMusicControlService.mPlaylistName);
+                        startActivity(goDivIntent);
+                    }
+                }
                 if (msg.what == mMessageToUpdateMusicInfo) {
                     try {
                         mSongSeekBar.setProgress(msg.arg1);
                         mSongTimeTV.setText(setPlayInfo(msg.arg2 / 1000, mMax / 1000));
                         mSongNameTV.setText(mMusicControlService.mSongName);
+                        if (mMusicControlService.mPlayer.isLooping()) {
+                            mLoopBtn.setBackground(getResources().getDrawable(R.drawable.ic_music_loopone));
+                        } else {
+                            mLoopBtn.setBackground(getResources().getDrawable(R.drawable.ic_music_loop));
+                        }
+
+                        if (mMusicControlService.mPlayer.isPlaying()) {
+                            mPlayBtn.setBackground(getResources().getDrawable(R.drawable.ic_music_pause));
+                        } else {
+                            mPlayBtn.setBackground(getResources().getDrawable(R.drawable.ic_music_play));
+                        }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -201,11 +253,14 @@ public class NowPlayingActivity extends Activity {
                     if (mStarOrPause == 1) {
                         mMusicControlService.play();
                         mStarOrPause++;
+                        mPlayBtn.setBackground(getResources().getDrawable(R.drawable.ic_music_pause));
                     } else {
                         if (!mMusicControlService.mPlayer.isPlaying()) {
                             mMusicControlService.goPlay();
+                            mPlayBtn.setBackground(getResources().getDrawable(R.drawable.ic_music_pause));
                         } else if (mMusicControlService.mPlayer.isPlaying()) {
                             mMusicControlService.pause();
+                            mPlayBtn.setBackground(getResources().getDrawable(R.drawable.ic_music_play));
                         }
                     }
                 } catch (Exception e) {
@@ -245,12 +300,14 @@ public class NowPlayingActivity extends Activity {
         mLoopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mMusicControlService.mPlayer.isLooping()){
+                if (mMusicControlService.mPlayer.isLooping()) {
                     mMusicControlService.mPlayer.setLooping(false);
-                    mLoopBtn.setText("loop");
-                }else {
+                    mLoopBtn.setText("");
+                    mLoopBtn.setBackground(getResources().getDrawable(R.drawable.ic_music_loop));
+                } else {
                     mMusicControlService.mPlayer.setLooping(true);
-                    mLoopBtn.setText("Loop One");
+                    mLoopBtn.setText("");
+                    mLoopBtn.setBackground(getResources().getDrawable(R.drawable.ic_music_loopone));
                 }
 
 
@@ -264,14 +321,38 @@ public class NowPlayingActivity extends Activity {
             }
         });
     }
-    public void showPopupMenu(View view){
+
+    public void showPopupMenu(View view) {
         mMenuBtn.setText("Select");
-        PopupMenu popupMenu=new PopupMenu(mContext,view);
-        popupMenu.getMenuInflater().inflate(R.menu.sample_menu,popupMenu.getMenu());
+        PopupMenu popupMenu = new PopupMenu(mContext, view);
+        popupMenu.getMenuInflater().inflate(R.menu.now_activity_menu, popupMenu.getMenu());
         popupMenu.show();
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                Toast.makeText(mContext, item.getTitle().toString(), Toast.LENGTH_LONG).show();
+                String title = item.getTitle().toString();
+                if (title.equals("Current playlist")) {
+                    Message m = mHandler.obtainMessage();
+                    m.what = mMessageToMusicListActivity;
+                    mHandler.sendMessage(m);
+                    Log.v("itemID", "playlistName=" + mMusicControlService.mPlaylistName);
+                }
+
+//
+
+//                Log.v("itemID", "item.getItemId()=" + item.getItemId());
+//                if (mPlaylistName.isEmpty()) {
+//                    mPlaylistName = "allSong";
+//                }
+//                Log.v("itemID", "playlistName=" + mPlaylistName);
+//                switch (item.getItemId()) {
+//                    case R.id.currentPlaylistItem:
+//
+//                        return true;
+//                    default:
+//                        break;
+//                }
                 return true;
             }
         });
@@ -282,10 +363,12 @@ public class NowPlayingActivity extends Activity {
             }
         });
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mMusicServiceConnection);
         Log.v("showLog", "ActivityOnDestroy");
     }
+
 }

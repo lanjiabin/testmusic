@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class MusicPlaylistsTreeActivity extends Activity {
     private ListView mPlaylistsTreeLV;
-    private Button mAddSongBtn,mRemoveSongBtn;
+    private Button mAddSongBtn, mRemoveSongBtn;
     private Context mContext;
     private ArrayList<HashMap<String, String>> playTreeListArrayList;
     private String mPlayListName;
@@ -32,21 +32,22 @@ public class MusicPlaylistsTreeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       initView();
-       OnClick();
+        initView();
+        OnClick();
     }
-    public void initView(){
-        mContext=getApplicationContext();
+
+    public void initView() {
+        mContext = getApplicationContext();
         setContentView(R.layout.activity_music_playlists_tree);
-        mPlaylistsTreeLV=findViewById(R.id.playlistsTreeLV);
-        mAddSongBtn=findViewById(R.id.addSongBtn);
-        mRemoveSongBtn=findViewById(R.id.removeViewBtn);
-        Intent intent=getIntent();
-        mPlayListName=intent.getStringExtra("playListName");
-        playTreeListArrayList=MusicDBService.getInstance().queryAllSongsListForListName(mContext,mPlayListName);
-        Log.v("TreeActivityName","mPlayListName="+mPlayListName);
-        Log.v("TreeActivityName","playTreeListArrayList="+playTreeListArrayList.toString());
-        if (!playTreeListArrayList.isEmpty()){
+        mPlaylistsTreeLV = findViewById(R.id.playlistsTreeLV);
+        mAddSongBtn = findViewById(R.id.addSongBtn);
+        mRemoveSongBtn = findViewById(R.id.removeViewBtn);
+        Intent intent = getIntent();
+        mPlayListName = intent.getStringExtra("playListName");
+        playTreeListArrayList = MusicDBService.getInstance().queryAllSongsListForListName(mContext, mPlayListName);
+        Log.v("TreeActivityName", "mPlayListName=" + mPlayListName);
+        Log.v("TreeActivityName", "playTreeListArrayList=" + playTreeListArrayList.toString());
+        if (!playTreeListArrayList.isEmpty()) {
             setListViewAdapter();
         }
         mMusicServiceConnection = new ServiceConnection() {
@@ -65,6 +66,7 @@ public class MusicPlaylistsTreeActivity extends Activity {
         bindService(musicServiceIntent, mMusicServiceConnection, BIND_AUTO_CREATE);
 
     }
+
     public void setListViewAdapter() {
         String[] musicPlayListName = new String[playTreeListArrayList.size()];
         int j = 0;
@@ -80,13 +82,15 @@ public class MusicPlaylistsTreeActivity extends Activity {
                 musicPlayListName);
         mPlaylistsTreeLV.setAdapter(adapter);
     }
-    public void OnClick(){
+
+    public void OnClick() {
 
         mAddSongBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(mContext,AllSongsNoActionActivity.class);
-                intent.putExtra("playListName",mPlayListName);
+                Intent intent = new Intent(mContext, AllSongsNoActionActivity.class);
+                intent.putExtra("playListName", mPlayListName);
+                intent.putExtra("starOrPause", 2);
                 startActivity(intent);
             }
         });
@@ -108,7 +112,7 @@ public class MusicPlaylistsTreeActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 List<Map<String, Object>> myMusicList;
                 myMusicList = new ArrayList<Map<String, Object>>();
-                for (int i=0;i<playTreeListArrayList.size();i++){
+                for (int i = 0; i < playTreeListArrayList.size(); i++) {
                     Map<String, Object> map = new HashMap<String, Object>();
                     map.put("id", playTreeListArrayList.get(i).get("musicid"));
                     map.put("title", playTreeListArrayList.get(i).get("musictitle"));
@@ -121,10 +125,12 @@ public class MusicPlaylistsTreeActivity extends Activity {
                     map.put("playlistname", playTreeListArrayList.get(i).get("playlistname"));
                     myMusicList.add(map);
                 }
-                mMusicControlService.mMusicList=myMusicList;
-                mMusicControlService.mSongNum=position;
+                mMusicControlService.mMusicList = myMusicList;
+                mMusicControlService.mSongNum = position;
                 mMusicControlService.play();
-                Intent intent=new Intent(mContext,NowPlayingActivity.class);
+                String CurrentPlaylistName= playTreeListArrayList.get(position).get("playlistname");
+                Intent intent = new Intent(mContext, NowPlayingActivity.class);
+                intent.putExtra("CurrentPlaylistName",CurrentPlaylistName);
                 startActivity(intent);
             }
         });
@@ -133,13 +139,14 @@ public class MusicPlaylistsTreeActivity extends Activity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (!mPlayListName.isEmpty()){
-            playTreeListArrayList=MusicDBService.getInstance().queryAllSongsListForListName(mContext,mPlayListName);
+        if (!mPlayListName.isEmpty()) {
+            playTreeListArrayList = MusicDBService.getInstance().queryAllSongsListForListName(mContext, mPlayListName);
         }
-        if (!playTreeListArrayList.isEmpty()){
+        if (!playTreeListArrayList.isEmpty()) {
             setListViewAdapter();
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
