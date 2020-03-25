@@ -13,6 +13,7 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -20,11 +21,14 @@ import java.util.Map;
 
 public class MusicControlService extends Service {
     public List<Map<String, Object>> mMusicList;
+    public List<Map<String, Object>> mMusicListCopy;
     public MediaPlayer mPlayer;
     public int mSongNum;
     public String mSongName;
     Context mContext = null;
     public String mPlaylistName="allSong";
+    public boolean mIsShuffle=false;
+    public boolean mIsListLoop=true;
 
     @Override
     public void onCreate() {
@@ -33,6 +37,7 @@ public class MusicControlService extends Service {
         this.mContext = getApplicationContext();
         mPlayer = new MediaPlayer();
         mMusicList = new ArrayList<Map<String, Object>>();
+        mMusicListCopy= new ArrayList<Map<String, Object>>();
         List<MusicFileInfo> musicFileInfoList = getMusicFileInfo();
         for (Iterator iterator = musicFileInfoList.iterator(); iterator.hasNext(); ) {
             MusicFileInfo musicFileInfo = (MusicFileInfo) iterator.next();
@@ -48,6 +53,7 @@ public class MusicControlService extends Service {
             mMusicList.add(map);
         }
         MusicDBService.getInstance().setMusicList(mMusicList);
+        mMusicListCopy=mMusicList;
     }
 
     @Override
@@ -120,6 +126,16 @@ public class MusicControlService extends Service {
         return musicFileIfs;
     }
 
+    public void setShuffle(boolean isShuffle){
+        mIsShuffle=isShuffle;
+        if (isShuffle){
+            Collections.shuffle(mMusicList);
+        }else {
+            mMusicList=mMusicListCopy;
+        }
+
+    }
+
     public void play() {
         try {
             mPlayer.reset();
@@ -131,7 +147,12 @@ public class MusicControlService extends Service {
             mPlayer.start();
             mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 public void onCompletion(MediaPlayer arg0) {
-                    next();
+                    if (!mIsListLoop && mSongNum==mMusicList.size()-1){
+                        pause();
+                    }else {
+                        next();
+                    }
+
                 }
             });
 

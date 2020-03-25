@@ -130,6 +130,7 @@ public class MusicPlaylistsTreeActivity extends Activity {
                 mMusicControlService.play();
                 String CurrentPlaylistName= playTreeListArrayList.get(position).get("playlistname");
                 Intent intent = new Intent(mContext, NowPlayingActivity.class);
+                intent.putExtra("starOrPause",2);
                 intent.putExtra("CurrentPlaylistName",CurrentPlaylistName);
                 startActivity(intent);
             }

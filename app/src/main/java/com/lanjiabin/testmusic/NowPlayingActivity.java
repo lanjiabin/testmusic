@@ -333,26 +333,36 @@ public class NowPlayingActivity extends Activity {
                 Toast.makeText(mContext, item.getTitle().toString(), Toast.LENGTH_LONG).show();
                 String title = item.getTitle().toString();
                 if (title.equals("Current playlist")) {
-                    Message m = mHandler.obtainMessage();
-                    m.what = mMessageToMusicListActivity;
-                    mHandler.sendMessage(m);
+//                    Message m = mHandler.obtainMessage();
+//                    m.what = mMessageToMusicListActivity;
+//                    mHandler.sendMessage(m);
+
+                    Log.v("itemID","mPlaylistName="+mMusicControlService.mPlaylistName);
+                    if (mMusicControlService.mPlaylistName.equals("allSong")) {
+                        Intent goAllIntent = new Intent();
+                        goAllIntent.setClass(mContext, AllSongsActivity.class);
+                        startActivity(goAllIntent);
+                    } else {
+                        Intent goDivIntent = new Intent(mContext, MusicPlaylistsTreeActivity.class);
+                        goDivIntent.putExtra("playListName", mMusicControlService.mPlaylistName);
+                        startActivity(goDivIntent);
+                    }
                     Log.v("itemID", "playlistName=" + mMusicControlService.mPlaylistName);
+
                 }
 
-//
+                if (title.equals("Fullscreen")){
+                    Intent goFullIntent = new Intent();
+                    goFullIntent.setClass(mContext, FullscreenActivity.class);
+                    startActivity(goFullIntent);
+                }
 
-//                Log.v("itemID", "item.getItemId()=" + item.getItemId());
-//                if (mPlaylistName.isEmpty()) {
-//                    mPlaylistName = "allSong";
-//                }
-//                Log.v("itemID", "playlistName=" + mPlaylistName);
-//                switch (item.getItemId()) {
-//                    case R.id.currentPlaylistItem:
-//
-//                        return true;
-//                    default:
-//                        break;
-//                }
+                if (title.equals("Player settings")){
+                    Intent goSettingsIntent = new Intent();
+                    goSettingsIntent.setClass(mContext, PlayerSettingsActivity.class);
+                    startActivity(goSettingsIntent);
+                }
+
                 return true;
             }
         });
