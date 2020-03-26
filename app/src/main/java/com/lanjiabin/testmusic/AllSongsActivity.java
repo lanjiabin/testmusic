@@ -42,33 +42,34 @@ public class AllSongsActivity extends Activity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            Intent intent=new Intent(mContext,Music2BrowserActivity.class);
-            startActivity(intent);
-            return true;
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                Intent intent = new Intent(mContext, Music2BrowserActivity.class);
+                startActivity(intent);
+                return true;
+            }
         }
-
         return super.onKeyDown(keyCode, event);
     }
 
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_MENU && event.getAction() == KeyEvent.ACTION_UP) {
             showPopupMenu(mMenuBtn);
-            Log.v("onKeyDown","KEYCODE_MENU");
             return true;
         }
+
         return super.dispatchKeyEvent(event);
     }
 
     public void initView() {
-        mContext=getApplicationContext();
+        mContext = getApplicationContext();
         setContentView(R.layout.activity_all_songs);
         mAllSongsLV = findViewById(R.id.allSongsLV);
-        mMenuBtn=findViewById(R.id.allMenuBtn);
-        mContext=getApplicationContext();
-        mPlayAllSongListArrayList=MusicDBService.getInstance().queryAllSongsList(mContext);
+        mMenuBtn = findViewById(R.id.allMenuBtn);
+        mContext = getApplicationContext();
+        mPlayAllSongListArrayList = MusicDBService.getInstance().queryAllSongsList(mContext);
 
         mMusicServiceConnection = new ServiceConnection() {
             @Override
@@ -99,14 +100,15 @@ public class AllSongsActivity extends Activity {
         mAllSongsLV = findViewById(R.id.allSongsLV);
         mAllSongsLV.setAdapter(adapter);
     }
-    public void OnClick(){
+
+    public void OnClick() {
 
         mAllSongsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 List<Map<String, Object>> myMusicList;
                 myMusicList = new ArrayList<Map<String, Object>>();
-                for (int i=0;i<mPlayAllSongListArrayList.size();i++){
+                for (int i = 0; i < mPlayAllSongListArrayList.size(); i++) {
                     Map<String, Object> map = new HashMap<String, Object>();
                     map.put("id", mPlayAllSongListArrayList.get(i).get("musicid"));
                     map.put("title", mPlayAllSongListArrayList.get(i).get("musictitle"));
@@ -118,12 +120,12 @@ public class AllSongsActivity extends Activity {
                     map.put("channel", mPlayAllSongListArrayList.get(i).get("musicquality"));
                     myMusicList.add(map);
                 }
-                mMusicControlService.mMusicList=myMusicList;
-                mMusicControlService.mSongNum=position;
+                mMusicControlService.mMusicList = myMusicList;
+                mMusicControlService.mSongNum = position;
                 mMusicControlService.play();
-                Intent intent=new Intent(mContext,NowPlayingActivity.class);
-                intent.putExtra("starOrPause",2);
-                intent.putExtra("CurrentPlaylistName","allSong");
+                Intent intent = new Intent(mContext, NowPlayingActivity.class);
+                intent.putExtra("starOrPause", 2);
+                intent.putExtra("CurrentPlaylistName", "allSong");
                 startActivity(intent);
             }
         });
@@ -136,22 +138,22 @@ public class AllSongsActivity extends Activity {
         });
     }
 
-    public void showPopupMenu(View view){
-//        mMenuBtn.setText("Select");
-        PopupMenu popupMenu=new PopupMenu(mContext,view);
-        popupMenu.getMenuInflater().inflate(R.menu.sample_menu,popupMenu.getMenu());
+    public void showPopupMenu(View view) {
+        mMenuBtn.setText("Select");
+        PopupMenu popupMenu = new PopupMenu(mContext, view);
+        popupMenu.getMenuInflater().inflate(R.menu.allsongs_activity_menu, popupMenu.getMenu());
         popupMenu.show();
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(mContext,item.getTitle().toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, item.getTitle().toString(), Toast.LENGTH_LONG).show();
                 return true;
             }
         });
         popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
             @Override
             public void onDismiss(PopupMenu menu) {
-//                mMenuBtn.setText("Menu");
+                mMenuBtn.setText("Menu");
             }
         });
     }

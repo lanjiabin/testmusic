@@ -107,9 +107,11 @@ public class PlayerSettingsActivity extends Activity {
 
                 if (textRepeatBtn.equals(mOneText)) {
                     mMusicControlService.mPlayer.setLooping(true);
+                    mMusicControlService.mIsListLoop = true;
                 }
                 if (textRepeatBtn.equals(mAllText)) {
                     mMusicControlService.mPlayer.setLooping(false);
+                    mMusicControlService.mIsListLoop = true;
                 }
                 if (textRepeatBtn.equals(mDisabledText)) {
                     mMusicControlService.mIsListLoop = false;

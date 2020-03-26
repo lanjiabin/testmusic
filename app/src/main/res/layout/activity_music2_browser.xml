@@ -2,101 +2,124 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@null">
-
-    <TableLayout
-        android:layout_weight="7"
-        android:layout_marginTop="15dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp">
-      <TableRow android:layout_marginTop="10dp">
-          <TextView
-              style="@style/Music_TextView"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="@string/number_1" />
-          <Button
-              android:id="@+id/nowPlayingBtn"
-              style="@style/Music_Button"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="@string/now_playing" />
-      </TableRow>
-        <TableRow android:layout_marginTop="10dp">
-            <TextView
-                style="@style/Music_TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/number_2" />
-            <Button
-                android:id="@+id/allSongsBtn"
-                style="@style/Music_Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/all_songs" />
-        </TableRow>
-        <TableRow android:layout_marginTop="10dp">
-            <TextView
-                style="@style/Music_TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/number_3" />
-            <Button
-                android:id="@+id/allVideosBtn"
-                style="@style/Music_Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/all_videos" />
-        </TableRow>
-        <TableRow android:layout_marginTop="10dp">
-            <TextView
-                style="@style/Music_TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/number_4" />
-            <Button
-                android:id="@+id/playlistsBtn"
-                style="@style/Music_Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/music_playlists" />
-        </TableRow>
-    </TableLayout>
+    android:background="@android:color/white"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom"
-        android:layout_weight="3"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_weight="7">
+
+            <TableRow android:layout_marginTop="10dp">
+
+                <TextView
+                    style="@style/Music_TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/number_1" />
+
+                <Button
+                    android:id="@+id/nowPlayingBtn"
+                    style="@style/Music_Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/now_playing" />
+            </TableRow>
+
+            <TableRow android:layout_marginTop="10dp">
+
+                <TextView
+                    style="@style/Music_TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/number_2" />
+
+                <Button
+                    android:id="@+id/allSongsBtn"
+                    style="@style/Music_Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/all_songs" />
+            </TableRow>
+
+            <TableRow android:layout_marginTop="10dp">
+
+                <TextView
+                    style="@style/Music_TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/number_3" />
+
+                <Button
+                    android:id="@+id/allVideosBtn"
+                    style="@style/Music_Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/all_videos" />
+            </TableRow>
+
+            <TableRow android:layout_marginTop="10dp">
+
+                <TextView
+                    style="@style/Music_TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/number_4" />
+
+                <Button
+                    android:id="@+id/playlistsBtn"
+                    style="@style/Music_Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/music_playlists" />
+            </TableRow>
+        </TableLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
         android:background="@android:color/black"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/OKBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
             android:layout_weight="1"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
             android:background="@null"
-            android:gravity="left|center_vertical"
-            android:text="Menu"
+            android:focusable="false"
+            android:gravity="center_vertical"
+            android:text="OK"
             android:textAllCaps="false"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
 
         <Button
-            android:id="@+id/backBtn"
-            android:layout_width="100dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="8dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
             android:background="@null"
+            android:focusable="false"
             android:gravity="right|center_vertical"
             android:text="Back"
             android:textAllCaps="false"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
     </LinearLayout>
 
 </LinearLayout>

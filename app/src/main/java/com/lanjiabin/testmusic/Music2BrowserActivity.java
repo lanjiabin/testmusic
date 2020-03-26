@@ -33,6 +33,7 @@ public class Music2BrowserActivity extends Activity{
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+
         if(keyCode == KeyEvent.KEYCODE_BACK){
             moveTaskToBack(true);
             return true;
@@ -40,6 +41,17 @@ public class Music2BrowserActivity extends Activity{
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction()==KeyEvent.ACTION_DOWN){
+            if (event.getKeyCode()==KeyEvent.KEYCODE_MENU){
+                KeyEvent enterEvent=new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_ENTER);
+                this.onKeyDown(KeyEvent.KEYCODE_ENTER,enterEvent);
+                return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
 
     public void initView(){
         mPermissions = new String[]{

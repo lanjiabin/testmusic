@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MusicDetailsActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Filename:"
+                android:textSize="25sp" />
+
+            <Button
+                android:id="@+id/fileNameBtn"
+                style="@style/Music_Details_Button" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Title:"
+                android:textSize="25sp" />
+
+            <Button
+                android:id="@+id/titleBtn"
+                style="@style/Music_Details_Button" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Artist:"
+                android:textSize="25sp" />
+
+            <Button
+                android:id="@+id/artistBtn"
+                style="@style/Music_Details_Button" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Duration:"
+                android:textSize="25sp" />
+
+            <Button
+                android:id="@+id/durationBtn"
+                style="@style/Music_Details_Button" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Size:"
+                android:textSize="25sp" />
+
+            <Button
+                android:id="@+id/sizeBtn"
+                style="@style/Music_Details_Button" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Location:"
+                android:textSize="25sp" />
+
+            <Button
+                android:id="@+id/locationBtn"
+                style="@style/Music_Details_Button" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

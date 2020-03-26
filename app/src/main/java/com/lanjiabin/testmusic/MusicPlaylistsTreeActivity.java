@@ -8,11 +8,15 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +25,7 @@ import java.util.Map;
 
 public class MusicPlaylistsTreeActivity extends Activity {
     private ListView mPlaylistsTreeLV;
-    private Button mAddSongBtn, mRemoveSongBtn;
+    private Button mAddSongBtn, mRemoveSongBtn,mMenuBtn;
     private Context mContext;
     private ArrayList<HashMap<String, String>> playTreeListArrayList;
     private String mPlayListName;
@@ -36,12 +40,24 @@ public class MusicPlaylistsTreeActivity extends Activity {
         OnClick();
     }
 
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_MENU && event.getAction() == KeyEvent.ACTION_UP) {
+            showPopupMenu(mMenuBtn);
+            return true;
+        }
+
+        return super.dispatchKeyEvent(event);
+    }
+
     public void initView() {
         mContext = getApplicationContext();
         setContentView(R.layout.activity_music_playlists_tree);
         mPlaylistsTreeLV = findViewById(R.id.playlistsTreeLV);
         mAddSongBtn = findViewById(R.id.addSongBtn);
         mRemoveSongBtn = findViewById(R.id.removeViewBtn);
+        mMenuBtn = findViewById(R.id.menuBtn);
         Intent intent = getIntent();
         mPlayListName = intent.getStringExtra("playListName");
         playTreeListArrayList = MusicDBService.getInstance().queryAllSongsListForListName(mContext, mPlayListName);
@@ -66,6 +82,37 @@ public class MusicPlaylistsTreeActivity extends Activity {
         bindService(musicServiceIntent, mMusicServiceConnection, BIND_AUTO_CREATE);
 
     }
+
+    public void showPopupMenu(View view) {
+        mMenuBtn.setText("Select");
+        PopupMenu popupMenu = new PopupMenu(mContext, view);
+        popupMenu.getMenuInflater().inflate(R.menu.playlist_tree_activity_menu, popupMenu.getMenu());
+        popupMenu.show();
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                String title=item.getTitle().toString();
+                Toast.makeText(mContext, item.getTitle().toString(), Toast.LENGTH_LONG).show();
+                if ("Add".equals(title)){
+                    Intent intent = new Intent(mContext, AllSongsNoActionActivity.class);
+                    intent.putExtra("playListName", mPlayListName);
+                    intent.putExtra("starOrPause", 2);
+                    startActivity(intent);
+                }
+                if ("Remove".equals(title)){
+
+                }
+                return true;
+            }
+        });
+        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            @Override
+            public void onDismiss(PopupMenu menu) {
+                mMenuBtn.setText("Menu");
+            }
+        });
+    }
+
 
     public void setListViewAdapter() {
         String[] musicPlayListName = new String[playTreeListArrayList.size()];

@@ -120,8 +120,8 @@ public class NowPlayingActivity extends Activity {
                 mMusicControlService = ((MusicBinder) service).getService();
                 seekBarThread();
                 Intent intent = getIntent();
-                if (intent.getStringExtra("CurrentPlaylistName")!=null){
-                    mMusicControlService.mPlaylistName=intent.getStringExtra("CurrentPlaylistName");
+                if (intent.getStringExtra("CurrentPlaylistName") != null) {
+                    mMusicControlService.mPlaylistName = intent.getStringExtra("CurrentPlaylistName");
                 }
             }
 
@@ -165,7 +165,7 @@ public class NowPlayingActivity extends Activity {
                 super.handleMessage(msg);
                 int mMax = mMusicControlService.mPlayer.getDuration();
                 if (msg.what == mMessageToMusicListActivity) {
-                    Log.v("mPlaylistName","mPlaylistName="+mMusicControlService.mPlaylistName);
+                    Log.v("mPlaylistName", "mPlaylistName=" + mMusicControlService.mPlaylistName);
                     if (mMusicControlService.mPlaylistName.equals("allSong")) {
                         Intent goAllIntent = new Intent();
                         goAllIntent.setClass(mContext, AllSongsActivity.class);
@@ -337,7 +337,7 @@ public class NowPlayingActivity extends Activity {
 //                    m.what = mMessageToMusicListActivity;
 //                    mHandler.sendMessage(m);
 
-                    Log.v("itemID","mPlaylistName="+mMusicControlService.mPlaylistName);
+                    Log.v("itemID", "mPlaylistName=" + mMusicControlService.mPlaylistName);
                     if (mMusicControlService.mPlaylistName.equals("allSong")) {
                         Intent goAllIntent = new Intent();
                         goAllIntent.setClass(mContext, AllSongsActivity.class);
@@ -351,16 +351,24 @@ public class NowPlayingActivity extends Activity {
 
                 }
 
-                if (title.equals("Fullscreen")){
+                if (title.equals("Fullscreen")) {
                     Intent goFullIntent = new Intent();
                     goFullIntent.setClass(mContext, FullscreenActivity.class);
                     startActivity(goFullIntent);
                 }
 
-                if (title.equals("Player settings")){
+                if (title.equals("Player settings")) {
                     Intent goSettingsIntent = new Intent();
                     goSettingsIntent.setClass(mContext, PlayerSettingsActivity.class);
                     startActivity(goSettingsIntent);
+                }
+
+                if (title.equals("Details")) {
+                    Intent goDetailsIntent = new Intent();
+                    String musicID = (String) mMusicControlService.mMusicList.get(mMusicControlService.mSongNum).get("id");
+                    goDetailsIntent.putExtra("musicID", musicID);
+                    goDetailsIntent.setClass(mContext, MusicDetailsActivity.class);
+                    startActivity(goDetailsIntent);
                 }
 
                 return true;

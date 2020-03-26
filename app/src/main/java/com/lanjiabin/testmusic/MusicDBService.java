@@ -165,4 +165,17 @@ public class MusicDBService {
         ArrayList<HashMap<String, String>> queryResult = musicDBManager.querySQLite(sql, new String[]{playListName});
         return queryResult;
     }
+
+    /**
+     * 8.根据id查询歌曲
+     *
+     * @param context 上下文
+     **/
+    public ArrayList<HashMap<String, String>> queryMusicInfoByID(Context context,String musicId) {
+        MusicDBManager musicDBManager = new MusicDBManager(context);
+        MusicDBHelper helper = new MusicDBHelper(context);
+        String sql = "SELECT * FROM allsongslist WHERE musicid=?";
+        ArrayList<HashMap<String, String>> queryResult = musicDBManager.querySQLite(sql, new String[]{musicId});
+        return queryResult;
+    }
 }
