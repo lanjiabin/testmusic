@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/playItem"
+        android:title="play" />
+
+    <item
+        android:id="@+id/addItem"
+        android:title="Add" />
+
+    <item
+        android:id="@+id/removeItem"
+        android:title="Remove" />
+
+    <item
+        android:id="@+id/sendItem"
+        android:title="Send">
+        <menu>Send By Bluetooth</menu>
+    </item>
+
+    <item
+        android:id="@+id/useItem"
+        android:title="Use" >
+        <menu>Incoming call</menu>
+    </item>
+
+    <item
+        android:id="@+id/DetailsItem"
+        android:title="Details" />
+
+</menu>
