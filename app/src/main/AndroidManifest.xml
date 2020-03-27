@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar">
-        <activity android:name=".VideosPlayActivity"/>
+        <activity android:name=".MusicAddToPlaylistsActivity"/>
+        <activity android:name=".VideosPlayActivity" />
         <activity android:name=".MusicDetailsActivity" />
         <activity android:name=".PlayerSettingsActivity" />
         <activity android:name=".FullscreenActivity" />
@@ -41,9 +42,7 @@
         <activity
             android:name=".NowPlayingActivity"
             android:launchMode="singleTop" />
-        <activity
-            android:name=".AllSongsActivity"
-            android:launchMode="singleTop" />
+        <activity android:name=".AllSongsActivity" />
         <activity android:name=".Music2BrowserActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

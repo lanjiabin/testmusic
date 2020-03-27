@@ -7,11 +7,15 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
-import android.widget.VideoView;
+import android.widget.PopupMenu;
+import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,13 +28,25 @@ public class AllVideosActivity extends Activity {
     private Context mContext;
     private List<Map<String, Object>> mVideosList;
     private ListView allVideosLV;
+    private Button mMenuBtn;
+    private int mSelectedPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-        setListViewAdapter();
+        setListViewAdapter1();
         OnClick();
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_MENU && event.getAction() == KeyEvent.ACTION_UP) {
+            showPopupMenu(mMenuBtn);
+            return true;
+        }
+
+        return super.dispatchKeyEvent(event);
     }
 
     public void initView() {
@@ -38,7 +54,7 @@ public class AllVideosActivity extends Activity {
         mContext = getApplicationContext();
         mVideosList = new ArrayList<Map<String, Object>>();
         allVideosLV = findViewById(R.id.allVideosLV);
-
+        mMenuBtn = findViewById(R.id.allMenuBtn);
         List<VideoFileInfo> videoFileInfoList = getVideos();
         for (Iterator iterator = videoFileInfoList.iterator(); iterator.hasNext(); ) {
             VideoFileInfo videoFileInfo = (VideoFileInfo) iterator.next();
@@ -55,6 +71,24 @@ public class AllVideosActivity extends Activity {
 
     }
 
+    private void setListViewAdapter1() {
+        ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+        for (int i = 0; i < mVideosList.size(); i++) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("title", (String) mVideosList.get(i).get("name"));
+            map.put("duration", getTime((String) mVideosList.get(i).get("duration")));
+            list.add(map);
+        }
+
+        SimpleAdapter adapter1 = new SimpleAdapter(
+                mContext,
+                list,
+                R.layout.videos_item,
+                new String[]{"title", "duration"},
+                new int[]{R.id.title, R.id.duration});
+        allVideosLV.setAdapter(adapter1);
+    }
+
     private void setListViewAdapter() {
         String[] videosAllList = new String[mVideosList.size()];
         int j = 0;
@@ -69,16 +103,41 @@ public class AllVideosActivity extends Activity {
         allVideosLV.setAdapter(adapter);
     }
 
+    private String getTime(String duration) {
+        int time = Integer.parseInt(duration) / 1000;
+        int mMinutes = 0;
+        while (time >= 60) {
+            mMinutes++;
+            time -= 60;
+        }
+        String all = (mMinutes < 10 ? "0" + mMinutes : mMinutes) + ":"
+                + (time < 10 ? "0" + time : time);
+
+        return all;
+    }
+
     public void OnClick() {
         allVideosLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String path = (String) mVideosList.get(position).get("path");
-                Log.v("setOnItemClickListener","path="+path);
+                Log.v("setOnItemClickListener", "path=" + path);
                 Intent intent = new Intent();
                 intent.setClass(mContext, VideosPlayActivity.class);
                 intent.putExtra("path", path);
                 startActivity(intent);
+            }
+        });
+
+        allVideosLV.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSelectedPosition = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
     }
@@ -88,6 +147,33 @@ public class AllVideosActivity extends Activity {
         return fileName.substring(index, fileName.length());
     }
 
+    public void showPopupMenu(View view) {
+        mMenuBtn.setText("Select");
+        PopupMenu popupMenu = new PopupMenu(mContext, view);
+        popupMenu.getMenuInflater().inflate(R.menu.allvideos_activity_menu, popupMenu.getMenu());
+        popupMenu.show();
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                String title = item.getTitle().toString();
+                if ("play".equals(title)) {
+                    String path = (String) mVideosList.get(mSelectedPosition).get("path");
+                    Log.v("setOnItemClickListener", "path=" + path);
+                    Intent intent = new Intent();
+                    intent.setClass(mContext, VideosPlayActivity.class);
+                    intent.putExtra("path", path);
+                    startActivity(intent);
+                }
+                return true;
+            }
+        });
+        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            @Override
+            public void onDismiss(PopupMenu menu) {
+                mMenuBtn.setText("Menu");
+            }
+        });
+    }
 
     /**
      * 获取本机视频列表

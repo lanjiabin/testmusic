@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,19 +44,55 @@ public class AllSongsNoActionActivity extends Activity {
     }
 
     public void setListViewAdapter() {
-        String[] musicPlayListName = new String[mAllSongArray.size()];
-        int j = 0;
+
+        ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
         for (int i = 0; i < mAllSongArray.size(); i++) {
-            String playlistName = mAllSongArray.get(i).get("musictitle");
-            musicPlayListName[j++] = playlistName;
+            HashMap<String, String> map = new HashMap<>();
+            map.put("title", mAllSongArray.get(i).get("musictitle"));
+            map.put("artist", mAllSongArray.get(i).get("musicartist"));
+            map.put("duration", getTime(mAllSongArray.get(i).get("musicduration")));
+            list.add(map);
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                R.layout.music_playlist_item,
-                R.id.playlistsItemTV,
-                musicPlayListName);
-        mAllSongsLV.setAdapter(adapter);
+        SimpleAdapter adapter1 = new SimpleAdapter(
+                mContext,
+                list,
+                R.layout.music_allsongs_item,
+                new String[]{"title", "duration", "artist"},
+                new int[]{R.id.title, R.id.duration, R.id.artist});
+
+        mAllSongsLV = findViewById(R.id.allSongsLV);
+        mAllSongsLV.setAdapter(adapter1);
+
+
+
+//
+//        String[] musicPlayListName = new String[mAllSongArray.size()];
+//        int j = 0;
+//        for (int i = 0; i < mAllSongArray.size(); i++) {
+//            String playlistName = mAllSongArray.get(i).get("musictitle");
+//            musicPlayListName[j++] = playlistName;
+//        }
+//
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+//                this,
+//                R.layout.music_playlist_item,
+//                R.id.playlistsItemTV,
+//                musicPlayListName);
+//        mAllSongsLV.setAdapter(adapter);
+    }
+
+    private String getTime(String duration) {
+        int time = Integer.parseInt(duration) / 1000;
+        int mMinutes = 0;
+        while (time >= 60) {
+            mMinutes++;
+            time -= 60;
+        }
+        String all = (mMinutes < 10 ? "0" + mMinutes : mMinutes) + ":"
+                + (time < 10 ? "0" + time : time);
+
+        return all;
     }
 
     public void OnClick() {

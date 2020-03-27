@@ -25,7 +25,6 @@ public class NowPlayingActivity extends Activity {
     private Context mContext;
     private Handler mHandler;
     private int mMessageToUpdateMusicInfo = 0x101;
-    private int mMessageToMusicListActivity = 0x102;
     private int mStarOrPause = 1;
 
     private TextView mSongNameTV, mSongTimeTV;
@@ -164,18 +163,6 @@ public class NowPlayingActivity extends Activity {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 int mMax = mMusicControlService.mPlayer.getDuration();
-                if (msg.what == mMessageToMusicListActivity) {
-                    Log.v("mPlaylistName", "mPlaylistName=" + mMusicControlService.mPlaylistName);
-                    if (mMusicControlService.mPlaylistName.equals("allSong")) {
-                        Intent goAllIntent = new Intent();
-                        goAllIntent.setClass(mContext, AllSongsActivity.class);
-                        startActivity(goAllIntent);
-                    } else {
-                        Intent goDivIntent = new Intent(mContext, MusicPlaylistsTreeActivity.class);
-                        goDivIntent.putExtra("playListName", mMusicControlService.mPlaylistName);
-                        startActivity(goDivIntent);
-                    }
-                }
                 if (msg.what == mMessageToUpdateMusicInfo) {
                     try {
                         mSongSeekBar.setProgress(msg.arg1);
@@ -333,11 +320,6 @@ public class NowPlayingActivity extends Activity {
                 Toast.makeText(mContext, item.getTitle().toString(), Toast.LENGTH_LONG).show();
                 String title = item.getTitle().toString();
                 if (title.equals("Current playlist")) {
-//                    Message m = mHandler.obtainMessage();
-//                    m.what = mMessageToMusicListActivity;
-//                    mHandler.sendMessage(m);
-
-                    Log.v("itemID", "mPlaylistName=" + mMusicControlService.mPlaylistName);
                     if (mMusicControlService.mPlaylistName.equals("allSong")) {
                         Intent goAllIntent = new Intent();
                         goAllIntent.setClass(mContext, AllSongsActivity.class);
@@ -347,8 +329,6 @@ public class NowPlayingActivity extends Activity {
                         goDivIntent.putExtra("playListName", mMusicControlService.mPlaylistName);
                         startActivity(goDivIntent);
                     }
-                    Log.v("itemID", "playlistName=" + mMusicControlService.mPlaylistName);
-
                 }
 
                 if (title.equals("Fullscreen")) {

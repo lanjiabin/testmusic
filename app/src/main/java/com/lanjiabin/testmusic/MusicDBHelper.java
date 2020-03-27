@@ -1,11 +1,8 @@
 package com.lanjiabin.testmusic;
 
 import android.content.Context;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 public class MusicDBHelper extends SQLiteOpenHelper {
 

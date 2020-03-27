@@ -56,9 +56,6 @@ public class MusicPlaylistsActivity extends Activity {
     public void initView() {
         mContext = getApplicationContext();
         playListArrayList = MusicDBService.getInstance().queryAllPlaylists(mContext);
-        ArrayList<HashMap<String, String>> playAllSongListArrayList = MusicDBService.getInstance().queryAllSongsList(mContext);
-        Log.v("showPlayListArrayList", playListArrayList.toString());
-        Log.v("showAllSongList", playAllSongListArrayList.toString());
         setContentView(R.layout.activity_music_playlists);
         mPlaylistsLV = findViewById(R.id.playlistsLV);
         mAddViewBtn = findViewById(R.id.addViewBtn);

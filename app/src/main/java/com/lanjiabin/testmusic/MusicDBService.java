@@ -1,8 +1,11 @@
 package com.lanjiabin.testmusic;
 
 import android.content.Context;
+import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +14,7 @@ public class MusicDBService {
     private static List<Map<String, Object>> mMusicList;
     private static MusicDBService musicDBService = null;
     private String mSql = "INSERT INTO allsongslist(musicid,musictitle,musicartist,musicduration,musicsize,musicurl,musicchannel,musicquality,playlistcreatetime,playlistupdatetime) VALUES(?,?,?,?,?,?,?,?,?,?)";
+    private static String mLocalTime;
 
     private MusicDBService() {
     }
@@ -19,7 +23,10 @@ public class MusicDBService {
         if (musicDBService == null) {
             musicDBService = new MusicDBService();
         }
-        mMusicList=new ArrayList<Map<String, Object>>();
+        mMusicList = new ArrayList<Map<String, Object>>();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        Log.v("localTime", "df.format(new Date())=" + df.format(new Date()));
+        mLocalTime = df.format(new Date());
         return musicDBService;
     }
 
@@ -116,11 +123,11 @@ public class MusicDBService {
                                     String playlistUpdateTime) {
         MusicDBManager musicDBManager = new MusicDBManager(context);
         MusicDBHelper helper = new MusicDBHelper(context);
-        if (!mMusicList.isEmpty()){
-            for (int i=0;i<mMusicList.size();i++){
-                if (musicId.equals(mMusicList.get(i).get("id"))){
+        if (!mMusicList.isEmpty()) {
+            for (int i = 0; i < mMusicList.size(); i++) {
+                if (musicId.equals(mMusicList.get(i).get("id"))) {
                     return;
-                }else {
+                } else {
                     musicDBManager.updateSQLite(mSql, new String[]{musicId,
                             musicTitle,
                             musicArtist,
@@ -158,7 +165,7 @@ public class MusicDBService {
      *
      * @param context 上下文
      **/
-    public ArrayList<HashMap<String, String>> queryAllSongsListForListName(Context context,String playListName) {
+    public ArrayList<HashMap<String, String>> queryAllSongsListForListName(Context context, String playListName) {
         MusicDBManager musicDBManager = new MusicDBManager(context);
         MusicDBHelper helper = new MusicDBHelper(context);
         String sql = "SELECT * FROM allsongslist WHERE playlistname=?";
@@ -171,7 +178,7 @@ public class MusicDBService {
      *
      * @param context 上下文
      **/
-    public ArrayList<HashMap<String, String>> queryMusicInfoByID(Context context,String musicId) {
+    public ArrayList<HashMap<String, String>> queryMusicInfoByID(Context context, String musicId) {
         MusicDBManager musicDBManager = new MusicDBManager(context);
         MusicDBHelper helper = new MusicDBHelper(context);
         String sql = "SELECT * FROM allsongslist WHERE musicid=?";

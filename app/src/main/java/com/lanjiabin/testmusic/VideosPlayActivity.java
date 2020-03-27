@@ -13,7 +13,7 @@ public class VideosPlayActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_videod_play);
+        setContentView(R.layout.activity_videos_play);
         videoView=findViewById(R.id.videoView);
         Intent intent=getIntent();
         String path=intent.getStringExtra("path");
