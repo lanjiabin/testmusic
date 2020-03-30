@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -14,12 +15,21 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
-public class Music2BrowserActivity extends Activity{
-    private Button mAllSongsBtn,mNowPlayingBtn,mPlayListsBtn,mAllVideosBtn;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class Music2BrowserActivity extends Activity {
+    private Button mAllSongsBtn, mNowPlayingBtn, mPlayListsBtn, mAllVideosBtn;
+    private ListView mListView;
     private Context mContext;
     private String[] mPermissions;
+    private int mSelectPosition;
 
     private MusicControlService mMusicControlService;
     private ServiceConnection mMusicServiceConnection;
@@ -34,7 +44,7 @@ public class Music2BrowserActivity extends Activity{
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             moveTaskToBack(true);
             return true;
         }
@@ -43,29 +53,77 @@ public class Music2BrowserActivity extends Activity{
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event.getAction()==KeyEvent.ACTION_DOWN){
-            if (event.getKeyCode()==KeyEvent.KEYCODE_MENU){
-                KeyEvent enterEvent=new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_ENTER);
-                this.onKeyDown(KeyEvent.KEYCODE_ENTER,enterEvent);
-                return true;
+        super.dispatchKeyEvent(event);
+        if (event.getAction() != KeyEvent.ACTION_DOWN) {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER) {
+                switch (mSelectPosition + 1) {
+                    case 1: {
+                        Intent intent = new Intent();
+                        intent.setClass(mContext, NowPlayingActivity.class);
+                        startActivity(intent);
+                        return true;
+                    }
+                    case 2: {
+                        Intent intent = new Intent();
+                        intent.setClass(mContext, AllSongsActivity.class);
+                        startActivity(intent);
+                        return true;
+                    }
+                    case 3: {
+                        Intent intent = new Intent();
+                        intent.setClass(mContext, AllVideosActivity.class);
+                        startActivity(intent);
+                        return true;
+                    }
+                    case 4: {
+                        Intent intent = new Intent();
+                        intent.setClass(mContext, MusicPlaylistsActivity.class);
+                        startActivity(intent);
+                        return true;
+                    }
+                    default:
+                        break;
+                }
             }
         }
-        return super.dispatchKeyEvent(event);
+        return true;
     }
 
-    public void initView(){
+    public void initView() {
         mPermissions = new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS};
-        mContext=Music2BrowserActivity.this;
+        mContext = Music2BrowserActivity.this;
         setContentView(R.layout.activity_music2_browser);
-        mAllSongsBtn=findViewById(R.id.allSongsBtn);
-        mNowPlayingBtn=findViewById(R.id.nowPlayingBtn);
-        mPlayListsBtn=findViewById(R.id.playlistsBtn);
-        mAllVideosBtn=findViewById(R.id.allVideosBtn);
+        mAllSongsBtn = findViewById(R.id.allSongsBtn);
+        mNowPlayingBtn = findViewById(R.id.nowPlayingBtn);
+        mPlayListsBtn = findViewById(R.id.playlistsBtn);
+        mAllVideosBtn = findViewById(R.id.allVideosBtn);
+        mListView = findViewById(R.id.mainList);
+        setListViewAdapter();
     }
-    public void onClick(){
+
+    public void setListViewAdapter() {
+        String title[] = {"Now playing", "All songs", "All videos", "Music playlists"};
+        ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+        for (int i = 0; i < title.length; i++) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("title", title[i]);
+            map.put("titleID", (i + 1) + "");
+            list.add(map);
+        }
+
+        SimpleAdapter adapter1 = new SimpleAdapter(
+                mContext,
+                list,
+                R.layout.music_browser_item,
+                new String[]{"titleID", "title"},
+                new int[]{R.id.titleTV, R.id.titleBtn});
+        mListView.setAdapter(adapter1);
+    }
+
+    public void onClick() {
 
         mMusicServiceConnection = new ServiceConnection() {
             @Override
@@ -84,8 +142,8 @@ public class Music2BrowserActivity extends Activity{
         mAllSongsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent();
-                intent.setClass(mContext,AllSongsActivity.class);
+                Intent intent = new Intent();
+                intent.setClass(mContext, AllSongsActivity.class);
                 startActivity(intent);
             }
         });
@@ -93,8 +151,8 @@ public class Music2BrowserActivity extends Activity{
         mNowPlayingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent();
-                intent.setClass(mContext,NowPlayingActivity.class);
+                Intent intent = new Intent();
+                intent.setClass(mContext, NowPlayingActivity.class);
                 startActivity(intent);
             }
         });
@@ -102,8 +160,8 @@ public class Music2BrowserActivity extends Activity{
         mPlayListsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent();
-                intent.setClass(mContext,MusicPlaylistsActivity.class);
+                Intent intent = new Intent();
+                intent.setClass(mContext, MusicPlaylistsActivity.class);
                 startActivity(intent);
             }
         });
@@ -111,9 +169,54 @@ public class Music2BrowserActivity extends Activity{
         mAllVideosBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent();
-                intent.setClass(mContext,AllVideosActivity.class);
+                Intent intent = new Intent();
+                intent.setClass(mContext, AllVideosActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (mSelectPosition + 1) {
+                    case 1: {
+                        Intent intent = new Intent();
+                        intent.setClass(mContext, NowPlayingActivity.class);
+                        startActivity(intent);
+                        break;
+                    }
+                    case 2: {
+                        Intent intent = new Intent();
+                        intent.setClass(mContext, AllSongsActivity.class);
+                        startActivity(intent);
+                        break;
+                    }
+                    case 3: {
+                        Intent intent = new Intent();
+                        intent.setClass(mContext, AllVideosActivity.class);
+                        startActivity(intent);
+                        break;
+                    }
+                    case 4: {
+                        Intent intent = new Intent();
+                        intent.setClass(mContext, MusicPlaylistsActivity.class);
+                        startActivity(intent);
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+        });
+
+        mListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSelectPosition = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
     }
