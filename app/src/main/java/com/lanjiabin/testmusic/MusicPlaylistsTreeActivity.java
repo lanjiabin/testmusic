@@ -106,6 +106,13 @@ public class MusicPlaylistsTreeActivity extends Activity {
                 if ("Remove".equals(title)) {
                     removeOneSongsForPlayList();
                 }
+                if ("Details".equals(title)) {
+                    Intent goDetailsIntent = new Intent();
+                    String musicID = playTreeListArrayList.get(mSelectPosition).get("musicid");
+                    goDetailsIntent.putExtra("musicID", musicID);
+                    goDetailsIntent.setClass(mContext, MusicDetailsActivity.class);
+                    startActivity(goDetailsIntent);
+                }
                 return true;
             }
         });
