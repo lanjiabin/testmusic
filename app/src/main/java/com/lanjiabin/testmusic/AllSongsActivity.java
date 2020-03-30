@@ -1,11 +1,15 @@
 package com.lanjiabin.testmusic;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -13,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -38,6 +43,7 @@ public class AllSongsActivity extends Activity {
     private ArrayList<HashMap<String, String>> mPlayAllSongListArrayList;
     private List<Map<String, Object>> mMusicList;
     private int mSelectedPosition;
+    private String mPathName;
 
 
     @Override
@@ -204,11 +210,14 @@ public class AllSongsActivity extends Activity {
                     intent.putExtra("CurrentPlaylistName", "allSong");
                     startActivity(intent);
                 }
-                if ("Add to playlist".equals(title)){
-                    Intent intent=new Intent(mContext,MusicAddToPlaylistsActivity.class);
-                    String musicID=(String)mMusicList.get(mSelectedPosition).get("id");
-                    intent.putExtra("musicID",musicID);
+                if ("Add to playlist".equals(title)) {
+                    Intent intent = new Intent(mContext, MusicAddToPlaylistsActivity.class);
+                    String musicID = (String) mMusicList.get(mSelectedPosition).get("id");
+                    intent.putExtra("musicID", musicID);
                     startActivity(intent);
+                }
+                if ("Delete".equals(title)) {
+                   showAlterDialog();
                 }
                 return true;
             }
@@ -219,6 +228,52 @@ public class AllSongsActivity extends Activity {
                 mMenuBtn.setText("Menu");
             }
         });
+    }
+
+    public static void deleteFileByPathName(String pathName, Context context) {
+        File file = new File(pathName);
+        if (file.exists())
+            file.delete();
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri uri = Uri.fromFile(file);
+        intent.setData(uri);
+        context.sendBroadcast(intent);
+    }
+
+
+    public void showAlterDialog() {
+        String titleText = "提示";
+        String tipMessageText = "确定删除该文件吗？删除后将不能找回！";
+        String okText = "确定";
+        String cancelText = "取消";
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(titleText);
+        builder.setMessage(tipMessageText);
+        builder.setPositiveButton(okText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mPathName = mPlayAllSongListArrayList.get(mSelectedPosition).get("musicurl");
+                if (!mPathName.isEmpty()) {
+                    deleteFileByPathName(mPathName, mContext);
+                    MusicDBService.getInstance().deleteSongByUrl(mContext, mPathName);
+                    mPlayAllSongListArrayList = MusicDBService.getInstance().queryAllSongsList(mContext);
+                    setListViewAdapter();
+                    Toast.makeText(mContext, "删除成功！", Toast.LENGTH_LONG).show();
+                }else {
+                    Toast.makeText(mContext, "删除失败！", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        builder.setNegativeButton(cancelText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.create().show();
     }
 
     @Override

@@ -15,7 +15,7 @@
 
     <item
         android:id="@+id/deleteItem"
-        android:title="delete" />
+        android:title="Delete" />
     <item
         android:id="@+id/sendItem"
         android:title="Send">
@@ -24,7 +24,7 @@
 
     <item
         android:id="@+id/useItem"
-        android:title="Use" >
+        android:title="Use">
         <menu>Incoming call</menu>
     </item>
 

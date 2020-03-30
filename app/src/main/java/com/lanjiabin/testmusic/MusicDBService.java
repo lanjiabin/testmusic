@@ -185,4 +185,16 @@ public class MusicDBService {
         ArrayList<HashMap<String, String>> queryResult = musicDBManager.querySQLite(sql, new String[]{musicId});
         return queryResult;
     }
+
+    /**
+     * 9.删除一首歌
+     *
+     * @param url 歌曲文件地址
+     **/
+    public void deleteSongByUrl(Context context, String url) {
+        MusicDBManager musicDBManager = new MusicDBManager(context);
+        MusicDBHelper helper = new MusicDBHelper(context);
+        String sql = "delete from allsongslist where musicurl=?";
+        musicDBManager.updateSQLite(sql, new String[]{url});
+    }
 }
