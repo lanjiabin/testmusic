@@ -165,6 +165,11 @@ public class MusicPlaylistsActivity extends Activity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 String title=item.getTitle().toString();
+                if ("Open".equals(title)){
+                    Intent intent = new Intent(mContext, MusicPlaylistsTreeActivity.class);
+                    intent.putExtra("playListName", mPlayListName);
+                    startActivity(intent);
+                }
                 if ("New".equals(title)){
                     showAlterDialogGetName("add");
                 }
