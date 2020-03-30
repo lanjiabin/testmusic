@@ -26,13 +26,14 @@ import java.util.Map;
 
 public class MusicPlaylistsTreeActivity extends Activity {
     private ListView mPlaylistsTreeLV;
-    private Button mAddSongBtn, mRemoveSongBtn,mMenuBtn;
+    private Button mAddSongBtn, mRemoveSongBtn, mMenuBtn;
     private Context mContext;
     private ArrayList<HashMap<String, String>> playTreeListArrayList;
     private String mPlayListName;
 
     private MusicControlService mMusicControlService;
     private ServiceConnection mMusicServiceConnection;
+    private int mSelectPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,16 +93,18 @@ public class MusicPlaylistsTreeActivity extends Activity {
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                String title=item.getTitle().toString();
-                Toast.makeText(mContext, item.getTitle().toString(), Toast.LENGTH_LONG).show();
-                if ("Add".equals(title)){
+                String title = item.getTitle().toString();
+                if ("play".equals(title)) {
+                    playMusic();
+                }
+                if ("Add".equals(title)) {
                     Intent intent = new Intent(mContext, AllSongsNoActionActivity.class);
                     intent.putExtra("playListName", mPlayListName);
                     intent.putExtra("starOrPause", 2);
                     startActivity(intent);
                 }
-                if ("Remove".equals(title)){
-
+                if ("Remove".equals(title)) {
+                    removeOneSongsForPlayList();
                 }
                 return true;
             }
@@ -133,20 +136,6 @@ public class MusicPlaylistsTreeActivity extends Activity {
                 new String[]{"title", "duration", "artist"},
                 new int[]{R.id.title, R.id.duration, R.id.artist});
         mPlaylistsTreeLV.setAdapter(adapter1);
-
-//        String[] musicPlayListName = new String[playTreeListArrayList.size()];
-//        int j = 0;
-//        for (int i = 0; i < playTreeListArrayList.size(); i++) {
-//            String playlistName = playTreeListArrayList.get(i).get("musictitle");
-//            musicPlayListName[j++] = playlistName;
-//        }
-//
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-//                this,
-//                R.layout.music_playlist_item,
-//                R.id.playlistsItemTV,
-//                musicPlayListName);
-//        mPlaylistsTreeLV.setAdapter(adapter);
     }
 
 
@@ -187,34 +176,59 @@ public class MusicPlaylistsTreeActivity extends Activity {
             }
         });
 
+        mPlaylistsTreeLV.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSelectPosition = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         mPlaylistsTreeLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                List<Map<String, Object>> myMusicList;
-                myMusicList = new ArrayList<Map<String, Object>>();
-                for (int i = 0; i < playTreeListArrayList.size(); i++) {
-                    Map<String, Object> map = new HashMap<String, Object>();
-                    map.put("id", playTreeListArrayList.get(i).get("musicid"));
-                    map.put("title", playTreeListArrayList.get(i).get("musictitle"));
-                    map.put("artist", playTreeListArrayList.get(i).get("musicartist"));
-                    map.put("duration", playTreeListArrayList.get(i).get("musicduration"));
-                    map.put("size", playTreeListArrayList.get(i).get("musicsize"));
-                    map.put("url", playTreeListArrayList.get(i).get("musicurl"));
-                    map.put("quality", playTreeListArrayList.get(i).get("musicchannel"));
-                    map.put("channel", playTreeListArrayList.get(i).get("musicquality"));
-                    map.put("playlistname", playTreeListArrayList.get(i).get("playlistname"));
-                    myMusicList.add(map);
-                }
-                mMusicControlService.mMusicList = myMusicList;
-                mMusicControlService.mSongNum = position;
-                mMusicControlService.play();
-                String CurrentPlaylistName= playTreeListArrayList.get(position).get("playlistname");
-                Intent intent = new Intent(mContext, NowPlayingActivity.class);
-                intent.putExtra("starOrPause",2);
-                intent.putExtra("CurrentPlaylistName",CurrentPlaylistName);
-                startActivity(intent);
+                mSelectPosition = position;
+                playMusic();
             }
         });
+    }
+
+    public void removeOneSongsForPlayList() {
+        String musicId = playTreeListArrayList.get(mSelectPosition).get("musicid");
+        MusicDBService.getInstance().updateForMusicId(mContext, "", musicId);
+        playTreeListArrayList = MusicDBService.getInstance().queryAllSongsListForListName(mContext, mPlayListName);
+        setListViewAdapter();
+
+    }
+
+    public void playMusic() {
+        List<Map<String, Object>> myMusicList;
+        myMusicList = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < playTreeListArrayList.size(); i++) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("id", playTreeListArrayList.get(i).get("musicid"));
+            map.put("title", playTreeListArrayList.get(i).get("musictitle"));
+            map.put("artist", playTreeListArrayList.get(i).get("musicartist"));
+            map.put("duration", playTreeListArrayList.get(i).get("musicduration"));
+            map.put("size", playTreeListArrayList.get(i).get("musicsize"));
+            map.put("url", playTreeListArrayList.get(i).get("musicurl"));
+            map.put("quality", playTreeListArrayList.get(i).get("musicchannel"));
+            map.put("channel", playTreeListArrayList.get(i).get("musicquality"));
+            map.put("playlistname", playTreeListArrayList.get(i).get("playlistname"));
+            myMusicList.add(map);
+        }
+        mMusicControlService.mMusicList = myMusicList;
+        mMusicControlService.mSongNum = mSelectPosition;
+        mMusicControlService.play();
+        String CurrentPlaylistName = playTreeListArrayList.get(mSelectPosition).get("playlistname");
+        Intent intent = new Intent(mContext, NowPlayingActivity.class);
+        intent.putExtra("starOrPause", 2);
+        intent.putExtra("CurrentPlaylistName", CurrentPlaylistName);
+        startActivity(intent);
     }
 
     @Override
