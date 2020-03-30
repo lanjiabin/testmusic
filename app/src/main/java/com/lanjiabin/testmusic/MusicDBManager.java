@@ -32,6 +32,21 @@ public class MusicDBManager {
         return isSuccess;
     }
 
+    public boolean updateSQLite(String sql) {
+        boolean isSuccess = false;
+        try {
+            mSQLiteDatabase.execSQL(sql);
+            isSuccess = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (mSQLiteDatabase != null) {
+                mSQLiteDatabase.close();
+            }
+        }
+        return isSuccess;
+    }
+
     public ArrayList<HashMap<String, String>> querySQLite(String sql, String[] bindArgs) {
         ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
         Cursor cursor = mSQLiteDatabase.rawQuery(sql, bindArgs);

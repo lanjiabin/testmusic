@@ -197,4 +197,14 @@ public class MusicDBService {
         String sql = "delete from allsongslist where musicurl=?";
         musicDBManager.updateSQLite(sql, new String[]{url});
     }
+
+    /**
+     * 10.删除所有歌曲列表
+     **/
+    public void deleteAllPlayList(Context context) {
+        MusicDBManager musicDBManager = new MusicDBManager(context);
+        MusicDBHelper helper = new MusicDBHelper(context);
+        String sql = "delete from playlist";
+        musicDBManager.updateSQLite(sql);
+    }
 }

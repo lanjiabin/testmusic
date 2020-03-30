@@ -182,6 +182,9 @@ public class MusicPlaylistsActivity extends Activity {
                         Toast.makeText(mContext, "请选择有效数据", Toast.LENGTH_LONG).show();
                     }
                 }
+                if ("Delete all".equals(title)){
+                    showAlterDialogIsDeleteAll();
+                }
                 if ("Rename".equals(title)){
                     if (mPlayListName != null) {
                         showAlterDialogGetName("update");
@@ -198,6 +201,35 @@ public class MusicPlaylistsActivity extends Activity {
                 mMenuBtn.setText("Menu");
             }
         });
+    }
+
+
+    public void showAlterDialogIsDeleteAll() {
+        String titleText = "提示";
+        String tipMessageText = "确定删除全部歌曲列表吗？！";
+        String okText = "确定";
+        String cancelText = "取消";
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(titleText);
+        builder.setMessage(tipMessageText);
+        builder.setPositiveButton(okText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                MusicDBService.getInstance().deleteAllPlayList(mContext);
+                playListArrayList = MusicDBService.getInstance().queryAllPlaylists(mContext);
+                setListViewAdapter();
+            }
+        });
+
+        builder.setNegativeButton(cancelText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.create().show();
     }
 
     public void showAlterDialogGetName(final String function) {
