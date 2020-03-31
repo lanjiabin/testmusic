@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.Map;
 public class MusicPlaylistsTreeActivity extends Activity {
     private ListView mPlaylistsTreeLV;
     private Button mAddSongBtn, mRemoveSongBtn, mMenuBtn;
+    private TextView toolbarTitleTV;
     private Context mContext;
     private ArrayList<HashMap<String, String>> playTreeListArrayList;
     private String mPlayListName;
@@ -60,8 +62,10 @@ public class MusicPlaylistsTreeActivity extends Activity {
         mAddSongBtn = findViewById(R.id.addSongBtn);
         mRemoveSongBtn = findViewById(R.id.removeViewBtn);
         mMenuBtn = findViewById(R.id.menuBtn);
+        toolbarTitleTV=findViewById(R.id.toolbarTitle);
         Intent intent = getIntent();
         mPlayListName = intent.getStringExtra("playListName");
+        toolbarTitleTV.setText(mPlayListName);
         playTreeListArrayList = MusicDBService.getInstance().queryAllSongsListForListName(mContext, mPlayListName);
         Log.v("TreeActivityName", "mPlayListName=" + mPlayListName);
         Log.v("TreeActivityName", "playTreeListArrayList=" + playTreeListArrayList.toString());
