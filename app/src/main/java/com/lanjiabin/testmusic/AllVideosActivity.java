@@ -11,7 +11,6 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -35,7 +34,7 @@ public class AllVideosActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-        setListViewAdapter1();
+        setListViewAdapter();
         OnClick();
     }
 
@@ -71,7 +70,7 @@ public class AllVideosActivity extends Activity {
 
     }
 
-    private void setListViewAdapter1() {
+    private void setListViewAdapter() {
         ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
         for (int i = 0; i < mVideosList.size(); i++) {
             HashMap<String, String> map = new HashMap<>();
@@ -87,20 +86,6 @@ public class AllVideosActivity extends Activity {
                 new String[]{"title", "duration"},
                 new int[]{R.id.title, R.id.duration});
         allVideosLV.setAdapter(adapter1);
-    }
-
-    private void setListViewAdapter() {
-        String[] videosAllList = new String[mVideosList.size()];
-        int j = 0;
-        for (int i = 0; i < mVideosList.size(); i++) {
-            String listName = (String) mVideosList.get(i).get("path");
-            String fileName = getFileName(listName);
-            videosAllList[j++] = fileName;
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
-                videosAllList);
-        allVideosLV.setAdapter(adapter);
     }
 
     private String getTime(String duration) {
@@ -163,6 +148,19 @@ public class AllVideosActivity extends Activity {
                     intent.setClass(mContext, VideosPlayActivity.class);
                     intent.putExtra("path", path);
                     startActivity(intent);
+                }
+                if ("Details".equals(title)) {
+                    if (mVideosList != null) {
+                        Intent intent = new Intent();
+                        intent.setClass(mContext, VideoDetailsActivity.class);
+                        intent.putExtra("path", (String) mVideosList.get(mSelectedPosition).get("path"));
+                        intent.putExtra("name", (String) mVideosList.get(mSelectedPosition).get("name"));
+                        intent.putExtra("resolution", (String) mVideosList.get(mSelectedPosition).get("resolution"));
+                        intent.putExtra("size", (String) mVideosList.get(mSelectedPosition).get("size"));
+                        intent.putExtra("date", (String) mVideosList.get(mSelectedPosition).get("date"));
+                        intent.putExtra("duration", (String) mVideosList.get(mSelectedPosition).get("duration"));
+                        startActivity(intent);
+                    }
                 }
                 return true;
             }
