@@ -77,8 +77,8 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:background="@drawable/ic_music_volume" />
-
             <TextView
+                android:visibility="gone"
                 android:id="@+id/songVolumeTV2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
