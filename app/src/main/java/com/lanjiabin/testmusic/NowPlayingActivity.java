@@ -2,10 +2,13 @@ package com.lanjiabin.testmusic;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -35,6 +38,10 @@ public class NowPlayingActivity extends Activity {
     private MusicControlService mMusicControlService;
 
     private ServiceConnection mMusicServiceConnection;
+
+    private Triangle mTriangle;
+    private AudioManager mAudioManager;
+    private VolumeReceiver mReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +140,25 @@ public class NowPlayingActivity extends Activity {
         Intent musicServiceIntent = new Intent(this, MusicControlService.class);
         bindService(musicServiceIntent, mMusicServiceConnection, BIND_AUTO_CREATE);
         musicThread();
+
+
+        mTriangle = findViewById(R.id.triangle);
+
+        mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+        double percent = (double) currentVolume / maxVolume;
+
+        mTriangle.setPercent(percent);
+        mTriangle.invalidate();
+
+        mReceiver = new VolumeReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.media.VOLUME_CHANGED_ACTION");
+        this.registerReceiver(mReceiver, filter);
+
+
     }
 
     private String setPlayInfo(int position, int max) {
@@ -366,7 +392,21 @@ public class NowPlayingActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mMusicServiceConnection);
+        unregisterReceiver(mReceiver);
         Log.v("showLog", "ActivityOnDestroy");
     }
 
+
+    private class VolumeReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("android.media.VOLUME_CHANGED_ACTION")) {
+                mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+                int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                int currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                double percent = (double) currentVolume / maxVolume;
+                mTriangle.setPercent(percent);
+            }
+        }
+    }
 }
