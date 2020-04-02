@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -218,6 +219,8 @@ public class AllSongsActivity extends Activity {
                 }
                 if ("Delete".equals(title)) {
                    showAlterDialog();
+                }
+                if ("Send By Bluetooth".equals(title)) {
                 }
                 return true;
             }

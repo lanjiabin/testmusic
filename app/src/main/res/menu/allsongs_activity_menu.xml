@@ -18,14 +18,12 @@
         android:title="Delete" />
     <item
         android:id="@+id/sendItem"
-        android:title="Send">
-        <menu>Send By Bluetooth</menu>
+        android:title="Send By Bluetooth">
     </item>
 
     <item
         android:id="@+id/useItem"
-        android:title="Use">
-        <menu>Incoming call</menu>
+        android:title="Use Incoming call">
     </item>
 
     <item
